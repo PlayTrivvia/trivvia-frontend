@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { generateUsername } from '../store/usernameSlice'
 import './IntroPage.css'
 
 interface IntroPageProps {
@@ -6,20 +8,17 @@ interface IntroPageProps {
 }
 
 function IntroPage({ onJoinGame }: IntroPageProps) {
-  const [nickname, setNickname] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector((state) => state.username);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (nickname.trim().length < 2) {
-      return
+  const handleJoinGame = async () => {
+    try {
+      const result = await dispatch(generateUsername()).unwrap();
+      onJoinGame(result);
+    } catch (error) {
+      console.error('Failed to generate username:', error);
+      // Could add error handling UI here
     }
-    setIsLoading(true)
-    // Simulate a brief loading state
-    setTimeout(() => {
-      onJoinGame(nickname.trim())
-      setIsLoading(false)
-    }, 500)
   }
 
   return (
@@ -43,35 +42,15 @@ function IntroPage({ onJoinGame }: IntroPageProps) {
             </ul>
           </div>
 
-          <form className="intro-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="nickname" className="form-label">
-                Choose your nickname
-              </label>
-              <input
-                id="nickname"
-                type="text"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="Enter your nickname..."
-                className="nickname-input"
-                maxLength={20}
-                disabled={isLoading}
-                autoFocus
-              />
-              <p className="form-hint">
-                2-20 characters, visible to other players
-              </p>
-            </div>
-
+          <div className="intro-form">
             <button
-              type="submit"
+              onClick={handleJoinGame}
               className={`join-button ${isLoading ? 'loading' : ''}`}
-              disabled={nickname.trim().length < 2 || isLoading}
+              disabled={isLoading}
             >
-              {isLoading ? 'Joining...' : 'Join Game'}
+              {isLoading ? 'Generating Username...' : 'Join Game'}
             </button>
-          </form>
+          </div>
         </div>
 
         <footer className="intro-footer">

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ChatComponent from './ChatComponent'
 import Leaderboard from './Leaderboard'
 import './GameRoom.css'
@@ -35,8 +35,22 @@ const mockMessages = [
 
 function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const [messages, setMessages] = useState(mockMessages)
+  const [showWelcome, setShowWelcome] = useState(true)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
+  useEffect(() => {
+    // Show welcome screen for 1.5 seconds then start transition
+    const timer = setTimeout(() => {
+      setIsTransitioning(true)
+      // After transition animation completes, hide welcome screen
+      setTimeout(() => {
+        setShowWelcome(false)
+        setIsTransitioning(false)
+      }, 300) // 300ms for fade transition
+    }, 1500)
 
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleSendMessage = (message: string) => {
     const newMessage = {
@@ -49,8 +63,25 @@ function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     setMessages([...messages, newMessage])
   }
 
+  if (showWelcome) {
+    return (
+      <div className="game-room">
+        <div className={`welcome-screen ${isTransitioning ? 'fade-out' : ''}`}>
+          <div className="welcome-content">
+            <h1 className="welcome-title">Welcome to Trivvia!</h1>
+            <p className="welcome-subtitle">Your nickname is:</p>
+            <div className="nickname-display">{playerName}</div>
+            <div className="welcome-loading">
+              <span className="loading-dots">Preparing your game</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="game-room">
+    <div className={`game-room ${isTransitioning ? 'fade-in' : ''}`}>
       <header className="game-header">
         <div className="header-left">
           <h1 className="game-title">Trivvia</h1>
