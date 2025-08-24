@@ -27,7 +27,7 @@ function IntroPage({ onJoinGame }: IntroPageProps) {
       <div className="intro-container">
         <header className="intro-header">
           <div className="logo-container">
-            <img src="/trivvia-logo.png" alt="Trivvia Logo" className="intro-logo" />
+            <img src="/trivvia-logo-transparent.png" alt="Trivvia Logo" className="intro-logo" />
           </div>
           <p className="intro-subtitle">Test your knowledge with friends</p>
         </header>
