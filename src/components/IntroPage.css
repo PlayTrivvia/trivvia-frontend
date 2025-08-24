@@ -15,12 +15,25 @@
   box-shadow: 
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  padding: var(--spacing-2xl);
+  padding: var(--spacing-xl);
   text-align: center;
 }
 
 .intro-header {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.intro-logo {
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+  border-radius: 16px;
 }
 
 .intro-title {
@@ -32,17 +45,18 @@
 }
 
 .intro-subtitle {
-  font-size: var(--text-xl);
+  font-size: var(--text-lg);
   color: var(--color-text-secondary);
   font-weight: 400;
+  margin-bottom: var(--spacing-sm);
 }
 
 .intro-content {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 .intro-description {
-  margin-bottom: var(--spacing-2xl);
+  margin-bottom: var(--spacing-lg);
   text-align: left;
 }
 
@@ -78,7 +92,7 @@
 
 .intro-form {
   background: var(--color-surface);
-  padding: var(--spacing-xl);
+  padding: var(--spacing-lg);
   border-radius: 8px;
   border: 1px solid var(--color-border);
 }

@@ -34,25 +34,9 @@ const mockMessages = [
 ]
 
 function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
-  const [currentAnswer, setCurrentAnswer] = useState('')
-  const [hasAnswered, setHasAnswered] = useState(false)
   const [messages, setMessages] = useState(mockMessages)
 
-  const handleSubmitAnswer = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (currentAnswer.trim() && !hasAnswered) {
-      const newMessage = {
-        id: messages.length + 1,
-        player: playerName,
-        message: currentAnswer.trim(),
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        type: 'answer' as const
-      }
-      setMessages([...messages, newMessage])
-      setHasAnswered(true)
-      setCurrentAnswer('')
-    }
-  }
+
 
   const handleSendMessage = (message: string) => {
     const newMessage = {
@@ -78,8 +62,12 @@ function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
       </header>
 
       <div className="game-layout">
+        <aside className="game-sidebar">
+          <Leaderboard players={mockPlayers} currentPlayer={playerName} />
+        </aside>
+
         <main className="game-main">
-          <div className="question-section">
+          <div className="unified-chat-section">
             <div className="question-header">
               <span className="question-category">{mockQuestion.category}</span>
               <span className="question-difficulty">{mockQuestion.difficulty}</span>
@@ -96,39 +84,19 @@ function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
             
             <div className="question-content">
               <h2 className="question-text">{mockQuestion.text}</h2>
+              <div className="answer-info">
+                <span className="correct-answer">Canberra</span>
+                <span className="winner-details">is the right answer! First was <strong>@Alex</strong></span>
+              </div>
             </div>
 
-            <form className="answer-form" onSubmit={handleSubmitAnswer}>
-              <div className="answer-input-group">
-                <input
-                  type="text"
-                  value={currentAnswer}
-                  onChange={(e) => setCurrentAnswer(e.target.value)}
-                  placeholder={hasAnswered ? "Answer submitted!" : "Type your answer..."}
-                  className="answer-input"
-                  disabled={hasAnswered}
-                />
-                <button
-                  type="submit"
-                  disabled={!currentAnswer.trim() || hasAnswered}
-                  className="submit-answer-button"
-                >
-                  {hasAnswered ? "Submitted" : "Submit"}
-                </button>
-              </div>
-            </form>
+            <ChatComponent 
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              currentPlayer={playerName}
+            />
           </div>
-
-          <ChatComponent 
-            messages={messages}
-            onSendMessage={handleSendMessage}
-            currentPlayer={playerName}
-          />
         </main>
-
-        <aside className="game-sidebar">
-          <Leaderboard players={mockPlayers} currentPlayer={playerName} />
-        </aside>
       </div>
     </div>
   )

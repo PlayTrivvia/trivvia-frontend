@@ -42,10 +42,7 @@ function ChatComponent({ messages, onSendMessage, currentPlayer }: ChatComponent
 
   return (
     <div className="chat-component">
-      <div className="chat-header">
-        <h3 className="chat-title">Game Chat</h3>
-        <span className="chat-subtitle">Chat with other players</span>
-      </div>
+
 
       <div className="chat-messages" ref={messagesContainerRef}>
         {messages.map((message) => (
@@ -74,14 +71,14 @@ function ChatComponent({ messages, onSendMessage, currentPlayer }: ChatComponent
 
       <form className="chat-form" onSubmit={handleSubmit}>
         <div className="chat-input-group">
-          <input
-            type="text"
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Type a message..."
-            className="chat-input"
-            maxLength={200}
-          />
+                      <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Type your answer..."
+              className="chat-input"
+              maxLength={200}
+            />
           <button
             type="submit"
             disabled={!newMessage.trim()}

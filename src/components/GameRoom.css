@@ -42,10 +42,11 @@
 .game-layout {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 300px;
+  grid-template-columns: 300px 1fr;
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
-  max-height: calc(100vh - 80px);
+  height: calc(100vh - 80px);
+  min-height: 0;
 }
 
 .game-main {
@@ -53,23 +54,31 @@
   flex-direction: column;
   gap: var(--spacing-lg);
   min-height: 0;
+  overflow: hidden;
 }
 
-.question-section {
+.unified-chat-section {
   background: var(--color-background);
   border: 2px solid var(--color-border);
   border-radius: 12px;
-  padding: var(--spacing-xl);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  max-height: calc(100vh - 120px);
 }
 
 .question-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-xl) var(--spacing-md) var(--spacing-xl);
   flex-wrap: wrap;
   gap: var(--spacing-md);
+  flex-shrink: 0;
+  min-height: 0;
 }
 
 .question-category {
@@ -118,8 +127,26 @@
 }
 
 .question-content {
-  margin: var(--spacing-xl) 0;
+  padding: 0 var(--spacing-xl) var(--spacing-lg) var(--spacing-xl);
   text-align: center;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--spacing-lg);
+  min-height: 0;
+}
+
+.answer-info {
+  margin-top: var(--spacing-md);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  font-weight: 400;
+}
+
+.correct-answer {
+  font-weight: 700;
+  color: var(--color-success);
+  margin-right: var(--spacing-xs);
 }
 
 .question-text {
@@ -178,6 +205,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  height: 100%;
 }
 
 /* Responsive Design */
@@ -187,7 +215,7 @@
     grid-template-rows: auto 1fr;
   }
   
-  .game-sidebar {
+  .game-main {
     order: -1;
     min-height: auto;
   }
@@ -233,5 +261,7 @@
   .question-text {
     font-size: var(--text-xl);
   }
+  
+
 }
 
