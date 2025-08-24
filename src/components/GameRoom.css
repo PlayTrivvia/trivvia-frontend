@@ -1,8 +1,9 @@
 .game-room {
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--color-background);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .game-header {
@@ -45,8 +46,9 @@
   grid-template-columns: 300px 1fr;
   gap: var(--spacing-lg);
   padding: var(--spacing-lg);
-  height: calc(100vh - 80px);
+  height: calc(100vh - 120px);
   min-height: 0;
+  overflow: hidden;
 }
 
 .game-main {
