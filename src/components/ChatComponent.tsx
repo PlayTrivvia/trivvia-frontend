@@ -6,7 +6,7 @@ export interface Message {
   player: string
   message: string
   timestamp: string
-  type: 'chat' | 'answer'
+  type: 'chat' | 'answer' | 'bot'
 }
 
 interface ChatComponentProps {
@@ -62,7 +62,21 @@ function ChatComponent({ messages, onSendMessage, currentPlayer }: ChatComponent
               {message.type === 'answer' && (
                 <span className="answer-prefix">💡 </span>
               )}
-              {message.message}
+              {message.type === 'bot' && (
+                <span className="bot-prefix">🤖 </span>
+              )}
+              {message.type === 'bot' ? (
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: message.message.replace(
+                      /(Correct! The answer is: )(.+?)(<br\/>|$)/,
+                      '$1<span class="answer-text">$2</span>$3'
+                    )
+                  }}
+                />
+              ) : (
+                message.message
+              )}
             </div>
           </div>
         ))}

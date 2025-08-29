@@ -22,7 +22,6 @@ export const useUserStatus = () => {
       currentStatusRef.current = 'online';
       sendStatusUpdate('online');
     } else {
-      console.log('🔄 User already online, no status update needed');
     }
   }, []);
 

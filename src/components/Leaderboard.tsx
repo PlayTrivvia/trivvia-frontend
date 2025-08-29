@@ -14,9 +14,11 @@ interface LeaderboardProps {
   currentPlayer: string
   isLoading: boolean
   error: string | null
+  timerValue?: number
+  formatTime?: (seconds: number) => string
 }
 
-function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProps) {
+function Leaderboard({ users, currentPlayer, isLoading, error, timerValue, formatTime }: LeaderboardProps) {
   // Debug: Log the users array to see their status
   console.log('📊 Leaderboard received users:', users);
   
@@ -77,7 +79,24 @@ function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProp
   return (
     <div className="leaderboard">
       <div className="leaderboard-header">
-        <h3 className="leaderboard-title">Leaderboard</h3>
+        {timerValue !== undefined && formatTime ? (
+          <div className="timer">
+            <span className="timer-text">
+              Time: {formatTime(timerValue)}
+            </span>
+            <div className="timer-bar">
+              <div 
+                className="timer-progress" 
+                style={{ 
+                  width: `${(timerValue / 600) * 100}%`,
+                  transition: 'width 1s linear'
+                }}
+              ></div>
+            </div>
+          </div>
+        ) : (
+          <h3 className="leaderboard-title">Leaderboard</h3>
+        )}
         <span className="player-count">{activeUsers.length} {activeUsers.length === 1 ? 'player' : 'players'}</span>
       </div>
 
