@@ -1,10 +1,9 @@
-import { useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { generateUsername } from '../store/usernameSlice'
 import './IntroPage.css'
 
 interface IntroPageProps {
-  onJoinGame: (name: string) => void
+  onJoinGame: () => void
 }
 
 function IntroPage({ onJoinGame }: IntroPageProps) {
@@ -13,8 +12,8 @@ function IntroPage({ onJoinGame }: IntroPageProps) {
 
   const handleJoinGame = async () => {
     try {
-      const result = await dispatch(generateUsername()).unwrap();
-      onJoinGame(result);
+      await dispatch(generateUsername()).unwrap();
+      onJoinGame();
     } catch (error) {
       console.error('Failed to generate username:', error);
       // Could add error handling UI here
