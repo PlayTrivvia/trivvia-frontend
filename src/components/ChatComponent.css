@@ -169,7 +169,7 @@
   }
   
   .chat-input-group {
-    flex-direction: column;
+    flex-direction: row;
   }
   
   .send-button {

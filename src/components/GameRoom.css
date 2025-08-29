@@ -133,11 +133,15 @@
 .game-header {
   background: var(--color-background);
   border-bottom: 2px solid var(--color-border);
-  padding: var(--spacing-lg) var(--spacing-xl);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.header-main {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-lg) var(--spacing-xl);
 }
 
 .header-left {
@@ -163,6 +167,42 @@
   padding: var(--spacing-sm) var(--spacing-lg);
   font-size: var(--text-sm);
 }
+
+/* Hide header leaderboard by default (desktop) */
+.header-leaderboard {
+  display: none;
+}
+
+/* Show header leaderboard only on mobile */
+@media (max-width: 768px) {
+  .header-leaderboard {
+    display: block;
+    position: fixed;
+    top: 50px;                 /* height of header */
+    left: 0;
+    right: 0;
+    bottom: 0;                 /* extend to bottom of screen */
+    z-index: 1000;
+    background: #ffffff;
+    padding: var(--spacing-md);
+    height: calc(100vh - 50px);   /* fill viewport below header */
+    height: calc(100dvh - 50px);  /* fix for mobile dynamic viewport */
+    overflow-y: auto;
+    animation: slideDown 0.3s ease-out;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
 .game-layout {
   flex: 1;
@@ -401,5 +441,225 @@
   .question-text {
     font-size: var(--text-xl);
   }
+}
+
+/* Mobile-specific styles for chat-like experience */
+@media (max-width: 768px) {
+  .game-room {
+    height: 100vh;
+    height: 100dvh; /* Use dynamic viewport height for mobile */
+  }
+  
+  .game-header {
+    min-height: 30px !important;
+    background: var(--color-background);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header-main {
+    padding: 6px var(--spacing-md);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    min-height: 20px !important;
+    height: 20px !important;
+  }
+  
+  .header-left {
+    flex-direction: row;
+    gap: var(--spacing-sm);
+    align-items: center;
+  }
+  
+  .game-title {
+    font-size: var(--text-lg);
+    margin: 0;
+  }
+  
+  .player-welcome {
+    display: none; /* Hide on mobile to save space */
+  }
+  
+  .leave-button {
+    display: none; /* Hide leave button on mobile */
+  }
+  
+  .header-leaderboard {
+    padding: var(--spacing-md);
+  }
+  
+  /* Mobile leaderboard styling */
+  .header-leaderboard .leaderboard-title {
+    font-size: var(--text-base); /* or even var(--text-sm) */
+    margin-bottom: var(--spacing-sm); /* tighten spacing too */
+  }
+  
+  .header-leaderboard .player-count {
+    font-size: var(--text-sm);
+  }
+  
+  .header-leaderboard .player-name {
+    font-size: var(--text-sm);
+    line-height: 1.2;
+  }
+  
+  .header-leaderboard .player-points {
+    font-size: var(--text-xs);
+    line-height: 1.2;
+  }
+  
+  .header-leaderboard .scoring-hint {
+    font-size: var(--text-xs);
+    padding: var(--spacing-sm);
+  }
+  
+  .game-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    padding: 0;
+    gap: 0;
+    height: calc(100vh - 50px);
+    height: calc(100dvh - 50px);
+  }
+  
+
+  
+  .game-sidebar {
+    display: none; /* Hide sidebar on mobile */
+  }
+  
+  .game-main {
+    order: 0;
+    min-height: 0;
+    height: 100%;
+  }
+  
+  .unified-chat-section {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-height: 100%;
+    height: 100%;
+  }
+  
+  .question-header {
+    padding: var(--spacing-sm) var(--spacing-md);
+    flex-direction: row;
+    align-items: center;
+    gap: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  
+  .question-category,
+  .question-difficulty {
+    font-size: var(--text-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+  
+  .timer {
+    margin-left: auto;
+  }
+  
+  .timer-text {
+    font-size: var(--text-xs);
+  }
+  
+  .timer-bar {
+    width: 60px;
+    height: 6px;
+  }
+  
+  .question-content {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-background);
+  }
+  
+  .question-text {
+    font-size: var(--text-lg);
+    line-height: 1.3;
+  }
+  
+  .answer-info {
+    font-size: var(--text-sm);
+  }
+  
+  .answer-form {
+    margin-top: var(--spacing-md);
+  }
+  
+  .answer-input-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-md);
+  }
+  
+  .answer-input {
+    font-size: var(--text-base);
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .submit-answer-button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-sm);
+  }
+}
+
+/* Hide mobile menu button on desktop */
+.mobile-menu-button {
+  display: none;
+}
+
+/* Show mobile menu button only on mobile */
+@media (max-width: 768px) {
+  .mobile-menu-button {
+    display: block !important;
+    background: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    padding: var(--spacing-sm) !important;
+    margin-right: var(--spacing-sm);
+    transition: transform 0.3s ease;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  .mobile-menu-button:hover {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .mobile-menu-button:active,
+  .mobile-menu-button:focus,
+  .mobile-menu-button:focus-visible,
+  .mobile-menu-button:focus-within {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  .mobile-menu-button.expanded {
+    transform: rotate(180deg) scaleX(-1);
+  }
+  
+
 }
 

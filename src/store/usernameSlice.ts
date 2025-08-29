@@ -3,12 +3,14 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 
 interface UsernameState {
   currentUsername: string;
+  sessionId: string;
   isLoading: boolean;
   error: string | null;
 }
 
 const initialState: UsernameState = {
   currentUsername: '',
+  sessionId: '',
   isLoading: false,
   error: null,
 };
@@ -32,7 +34,7 @@ export const generateUsername = createAsyncThunk(
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      return data.username; 
+      return { username: data.username, session_id }; 
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to generate username');
     }
@@ -42,21 +44,21 @@ export const generateUsername = createAsyncThunk(
 // Async thunk for releasing username
 export const releaseUsername = createAsyncThunk(
   'username/release',
-  async (username: string, { rejectWithValue }) => {
+  async (session_id: string, { rejectWithValue }) => {
     try {
       const response = await fetch('http://localhost:8081/release_username', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ session_id }),
       });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      return username;
+      return session_id;
     } catch (error) {
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to release username');
     }
@@ -67,6 +69,11 @@ const usernameSlice = createSlice({
   name: 'username',
   initialState,
   reducers: {
+    clearUsername: (state) => {
+      state.currentUsername = '';
+      state.sessionId = '';
+      state.error = null;
+    },
     setUsername: (state, action: PayloadAction<string>) => {
       state.currentUsername = action.payload;
       state.error = null;
@@ -81,7 +88,8 @@ const usernameSlice = createSlice({
       })
       .addCase(generateUsername.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.currentUsername = action.payload;
+        state.currentUsername = action.payload.username;
+        state.sessionId = action.payload.session_id;
         state.error = null;
       })
       .addCase(generateUsername.rejected, (state, action) => {
@@ -95,6 +103,7 @@ const usernameSlice = createSlice({
       .addCase(releaseUsername.fulfilled, (state) => {
         state.isLoading = false;
         state.currentUsername = '';
+        state.sessionId = '';
         state.error = null;
       })
       .addCase(releaseUsername.rejected, (state, action) => {
@@ -104,5 +113,5 @@ const usernameSlice = createSlice({
   },
 });
 
-export const { setUsername } = usernameSlice.actions;
+export const { clearUsername, setUsername } = usernameSlice.actions;
 export default usernameSlice.reducer;

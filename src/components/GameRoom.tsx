@@ -1,42 +1,39 @@
-import { useState, useEffect } from 'react'
-import ChatComponent from './ChatComponent'
-import Leaderboard from './Leaderboard'
-import './GameRoom.css'
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { useLeaderboard } from '../hooks/useLeaderboard';
+import Leaderboard from './Leaderboard';
+import ChatComponent from './ChatComponent';
+import './GameRoom.css';
 
 interface GameRoomProps {
-  playerName: string
-  onLeaveGame: () => void
+  playerName: string;
+  onLeaveGame: () => void;
+  onLoadingStateChange: (loading: boolean) => void;
 }
 
-// Mock data for static layout
-const mockQuestion = {
-  id: 1,
-  text: "What is the capital city of Australia?",
-  category: "Geography",
-  difficulty: "Medium",
-  timeRemaining: 25
-}
+export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange }: GameRoomProps) {
+  const navigate = useNavigate();
+  const [showWelcome, setShowWelcome] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
+  
+  const [messages, setMessages] = useState<Array<{
+    id: number;
+    player: string;
+    message: string;
+    timestamp: string;
+    type: 'chat' | 'answer';
+  }>>([]);
 
-const mockPlayers = [
-  { id: 1, name: "Sarah", score: 450, isOnline: true },
-  { id: 2, name: "Mike", score: 380, isOnline: true },
-  { id: 3, name: "Emma", score: 320, isOnline: false },
-  { id: 4, name: "Alex", score: 290, isOnline: true },
-  { id: 5, name: "Lisa", score: 275, isOnline: true },
-]
+  // Real-time leaderboard data
+  const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate } = useLeaderboard();
 
-const mockMessages = [
-  { id: 1, player: "Sarah", message: "Good luck everyone!", timestamp: "2:34 PM", type: "chat" as const },
-  { id: 2, player: "Mike", message: "Sydney", timestamp: "2:35 PM", type: "answer" as const },
-  { id: 3, player: "Emma", message: "I think it's Canberra", timestamp: "2:35 PM", type: "answer" as const },
-  { id: 4, player: "Alex", message: "Canberra for sure", timestamp: "2:35 PM", type: "answer" as const },
-  { id: 5, player: "Sarah", message: "Wait, is it Melbourne?", timestamp: "2:35 PM", type: "chat" as const },
-]
-
-function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
-  const [messages, setMessages] = useState(mockMessages)
-  const [showWelcome, setShowWelcome] = useState(true)
-  const [isTransitioning, setIsTransitioning] = useState(false)
+  // WebSocket connection for both session management and leaderboard updates
+  useWebSocket(() => {
+    // When session is dropped, redirect to home
+    navigate('/');
+  }, onLeaderboardUpdate);
 
   useEffect(() => {
     // Show welcome screen for 1.5 seconds then start transition
@@ -46,11 +43,16 @@ function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
       setTimeout(() => {
         setShowWelcome(false)
         setIsTransitioning(false)
+        // Notify parent component that loading is complete
+        onLoadingStateChange(false)
       }, 300) // 300ms for fade transition
     }, 1500)
 
+    // Notify parent component that loading has started
+    onLoadingStateChange(true)
+
     return () => clearTimeout(timer)
-  }, [])
+  }, [onLoadingStateChange])
 
   const handleSendMessage = (message: string) => {
     const newMessage = {
@@ -82,39 +84,69 @@ function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
 
   return (
     <div className={`game-room ${isTransitioning ? 'fade-in' : ''}`}>
-      <header className="game-header">
-        <div className="header-left">
-          <h1 className="game-title">Trivvia</h1>
-          <span className="player-welcome">Welcome, {playerName}!</span>
+      <header className={`game-header ${isHeaderExpanded ? 'expanded' : ''}`}>
+        <div className="header-main">
+          <div className="header-left">
+            <h1 className="game-title">Trivvia</h1>
+            <span className="player-welcome">Welcome, {playerName}!</span>
+          </div>
+          <div className="header-right">
+            <button 
+              className={`mobile-menu-button ${isHeaderExpanded ? 'expanded' : ''}`}
+              onClick={() => setIsHeaderExpanded(!isHeaderExpanded)}
+              aria-label={isHeaderExpanded ? 'Close leaderboard' : 'Open leaderboard'}
+                      >
+            <svg width="34" height="34" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 18L24 30L36 18" stroke="#6366F1" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+            <button className="leave-button secondary" onClick={onLeaveGame}>
+              Leave Game
+            </button>
+          </div>
         </div>
-        <button className="leave-button secondary" onClick={onLeaveGame}>
-          Leave Game
-        </button>
+        
+        {/* Collapsible leaderboard section */}
+        {isHeaderExpanded && (
+          <div className="header-leaderboard">
+            <Leaderboard 
+              users={leaderboardUsers}
+              currentPlayer={playerName}
+              isLoading={leaderboardLoading}
+              error={null}
+            />
+          </div>
+        )}
       </header>
 
       <div className="game-layout">
         <aside className="game-sidebar">
-          <Leaderboard players={mockPlayers} currentPlayer={playerName} />
+          <Leaderboard 
+            users={leaderboardUsers}
+            currentPlayer={playerName}
+            isLoading={leaderboardLoading}
+            error={null}
+          />
         </aside>
 
         <main className="game-main">
           <div className="unified-chat-section">
             <div className="question-header">
-              <span className="question-category">{mockQuestion.category}</span>
-              <span className="question-difficulty">{mockQuestion.difficulty}</span>
+              <span className="question-category">Geography</span>
+              <span className="question-difficulty">Medium</span>
               <div className="timer">
-                <span className="timer-text">Time: {mockQuestion.timeRemaining}s</span>
+                <span className="timer-text">Time: 25s</span>
                 <div className="timer-bar">
                   <div 
                     className="timer-progress" 
-                    style={{ width: `${(mockQuestion.timeRemaining / 30) * 100}%` }}
+                    style={{ width: `${(25 / 30) * 100}%` }}
                   ></div>
                 </div>
               </div>
             </div>
             
             <div className="question-content">
-              <h2 className="question-text">{mockQuestion.text}</h2>
+              <h2 className="question-text">What is the capital city of Australia?</h2>
               <div className="answer-info">
                 <span className="correct-answer">Canberra</span>
                 <span className="winner-details">is the right answer! First was <strong>@Alex</strong></span>
@@ -129,9 +161,9 @@ function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           </div>
         </main>
       </div>
+      
+
     </div>
   )
 }
-
-export default GameRoom
 

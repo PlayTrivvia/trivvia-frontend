@@ -1,59 +1,74 @@
-import { useState, useEffect } from 'react'
-import { useAppDispatch, useAppSelector } from './store/hooks'
-import { releaseUsername } from './store/usernameSlice'
+import { useEffect, useState, useRef } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import IntroPage from './components/IntroPage'
 import GameRoom from './components/GameRoom'
+import Navigation from './components/Navigation'
+import { useUserStatus } from './hooks/useHeartbeat'
+import { useWebSocket } from './hooks/useWebSocket'
+import { useAppSelector } from './store/hooks'
 import './App.css'
 
-type Page = 'intro' | 'game'
-
-function App() {
-  const [currentPage, setCurrentPage] = useState<Page>('intro')
-  const dispatch = useAppDispatch();
-  const { currentUsername } = useAppSelector((state) => state.username);
+// Wrapper component to handle navigation and state management
+function AppContent() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { currentUsername, sessionId } = useAppSelector((state) => state.username);
+  const [isGameLoading, setIsGameLoading] = useState(false);
+  
+  // Start user status monitoring when user is in game
+  useUserStatus();
+  
+  // WebSocket connection is handled in GameRoom component
+  // No need for duplicate connection here
 
   const handleJoinGame = (name: string) => {
-    setCurrentPage('game')
+    navigate('/game');
   }
 
   const handleLeaveGame = async () => {
-    // Release username before leaving
-    if (currentUsername) {
-      try {
-        await dispatch(releaseUsername(currentUsername)).unwrap();
-      } catch (error) {
-        console.error('Failed to release username:', error);
-      }
-    }
-    setCurrentPage('intro')
+    // No need to manually release username - WebSocket handles this automatically
+    // Just navigate away
+    navigate(-1);
   }
 
-  // Handle tab close/window unload to release username
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (currentUsername && currentPage === 'game') {
-        // Use sendBeacon for more reliable delivery during page unload
-        const data = JSON.stringify({ username: currentUsername });
-        navigator.sendBeacon('http://localhost:8081/release_username', data);
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [currentUsername, currentPage]);
+  // No need to handle tab close/window unload - WebSocket handles cleanup automatically
+  
+  // No need to handle navigation changes - WebSocket handles cleanup automatically
 
   return (
     <div className="app">
-      {currentPage === 'intro' && (
-        <IntroPage onJoinGame={handleJoinGame} />
-      )}
-      {currentPage === 'game' && currentUsername && (
-        <GameRoom playerName={currentUsername} onLeaveGame={handleLeaveGame} />
-      )}
+      <Navigation isGameLoading={isGameLoading} />
+      <Routes>
+        <Route path="/" element={<IntroPage onJoinGame={handleJoinGame} />} />
+        <Route 
+          path="/intro" 
+          element={<Navigate to="/" replace />} 
+        />
+        <Route 
+          path="/game" 
+          element={
+            currentUsername ? (
+              <GameRoom 
+                playerName={currentUsername} 
+                onLeaveGame={handleLeaveGame}
+                onLoadingStateChange={setIsGameLoading}
+              />
+            ) : (
+              <Navigate to="/" replace />
+            )
+          } 
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   )
 }
 
