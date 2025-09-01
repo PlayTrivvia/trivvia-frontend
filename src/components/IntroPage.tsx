@@ -15,8 +15,7 @@ function IntroPage({ onJoinGame }: IntroPageProps) {
       await dispatch(generateUsername()).unwrap();
       onJoinGame();
     } catch (error) {
-      console.error('Failed to generate username:', error);
-      // Could add error handling UI here
+      
     }
   }
 

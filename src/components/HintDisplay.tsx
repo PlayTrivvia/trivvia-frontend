@@ -11,7 +11,6 @@ export default function HintDisplay({ hint, done }: HintDisplayProps) {
   const lastHintRef = useRef<string>('');
 
   useEffect(() => {
-    console.log('💡 HintDisplay effect:', { hint, done, lastHint: lastHintRef.current });
     
     if (!hintRef.current || hint === lastHintRef.current) {
       return;
@@ -19,7 +18,6 @@ export default function HintDisplay({ hint, done }: HintDisplayProps) {
 
     // Only update if we have a new hint
     if (hint !== lastHintRef.current) {
-      console.log('💡 Updating hint display:', { from: lastHintRef.current, to: hint });
       lastHintRef.current = hint;
       
       // Progressive letter reveal - add new letters without re-rendering

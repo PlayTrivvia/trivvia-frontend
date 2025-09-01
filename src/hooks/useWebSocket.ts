@@ -59,7 +59,8 @@ export const useWebSocket = (
     }
 
     isConnectingRef.current = true;
-    const wsUrl = `ws://localhost:8081/ws?session_id=${sessionId}`;
+    const wsBase = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8081';
+    const wsUrl = `${wsBase}/ws?session_id=${sessionId}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
@@ -82,13 +83,11 @@ export const useWebSocket = (
     ws.onmessage = (event) => {
       try {
         const message: WebSocketMessage = JSON.parse(event.data);
-        console.log('📡 WebSocket message received:', message);
         
         if (message.type === 'user_left') {
           // Check if this user_left event is for the current user
           if (message.session_id === sessionId) {
             // Current user was removed, redirect to landing page
-            console.log('🚪 Current user left, redirecting to landing page');
             onSessionDroppedRef.current();
           } else {
             // Another user left, update leaderboard
@@ -105,7 +104,6 @@ export const useWebSocket = (
             onChatMessageRef.current(message);
           }
         } else if (message.type === 'trivia_question') {
-          console.log('🎯 Received trivia question event:', message);
           // Handle trivia question from backend (data structure: { type, category, question, difficulty })
           if (onChatMessageRef.current) {
             onChatMessageRef.current(message);
@@ -117,7 +115,6 @@ export const useWebSocket = (
           }
         } else if (message.type === 'streak_update') {
           // Handle streak update from backend
-          console.log('🔥 WebSocket received streak_update:', message);
           if (onLeaderboardUpdateRef.current) {
             onLeaderboardUpdateRef.current(message);
           }
@@ -135,7 +132,7 @@ export const useWebSocket = (
           // Unknown message type
         }
       } catch (error) {
-        console.error('Error parsing WebSocket message:', error);
+        
       }
     };
 

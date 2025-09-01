@@ -22,8 +22,9 @@ export const generateUsername = createAsyncThunk(
     try {
       // Generate a unique session ID
       const session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      const response = await fetch('http://localhost:8081/generate_username', {
+
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/generate_username`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

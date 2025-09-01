@@ -77,7 +77,8 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const loadChatHistory = async () => {
     try {
       setIsLoadingChatHistory(true);
-      const response = await fetch('http://localhost:8081/get_chat_history');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/get_chat_history`);
       if (response.ok) {
         const data = await response.json();
         
@@ -115,10 +116,10 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           setMessages(sortedMessages);
         }
       } else {
-        console.error('❌ Failed to load chat history:', response.status);
+        
       }
     } catch (error) {
-      console.error('❌ Error loading chat history:', error);
+      
     } finally {
       setIsLoadingChatHistory(false);
     }
@@ -127,7 +128,8 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   // Function to fetch current question when user joins
   const fetchCurrentQuestion = async () => {
     try {
-      const response = await fetch('http://localhost:8081/current_question');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/current_question`);
       if (response.ok) {
         const data = await response.json();
         
@@ -140,17 +142,18 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           });
         }
       } else {
-        console.error('❌ Failed to fetch current question:', response.status);
+        
       }
     } catch (error) {
-      console.error('❌ Error fetching current question:', error);
+      
     }
   };
 
   // Function to fetch current hint when user joins
   const fetchCurrentHint = async () => {
     try {
-      const response = await fetch('http://localhost:8081/current_hint');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/current_hint`);
       if (response.ok) {
         const data = await response.json();
         
@@ -162,12 +165,11 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
         }
       } else if (response.status === 404) {
         // No hint available yet, which is fine
-        console.log('ℹ️ No current hint available');
       } else {
-        console.error('❌ Failed to fetch current hint:', response.status);
+        
       }
     } catch (error) {
-      console.error('❌ Error fetching current hint:', error);
+      
     }
   };
 
@@ -181,14 +183,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     // Handle trivia questions - this event comes immediately on login with current question
     // Data structure: { type, category, question, difficulty } (direct, not nested under 'data')
     if (chatData?.type === 'trivia_question') {
-      console.log('🎯 Processing trivia question event:', chatData);
-      console.log('🎯 Question details:', {
-        type: chatData.type,
-        category: chatData.category,
-        question: chatData.question,
-        difficulty: chatData.difficulty
-      });
-      console.log('🎯 Raw trivia question event data:', chatData);
+      
       
       setCurrentQuestion({
         id: chatData.type + '_' + Date.now(), // Generate unique ID since backend doesn't provide one
@@ -210,7 +205,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     
     // Handle hints
     if (chatData?.type === 'trivia_hint') {
-      console.log('💡 Received hint:', chatData);
+      
       setCurrentHint({
         hint: chatData.hint,
         done: chatData.done
@@ -245,7 +240,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           // Correct answer detected, waiting for next question from backend
         }
       } catch (error) {
-        console.error('Error processing chat message:', error);
+        
       }
     }
   });

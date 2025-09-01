@@ -17,12 +17,12 @@ export const useLeaderboard = () => {
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8081/active_users');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/active_users`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('📊 Fetched initial users:', data.users);
       
       // Ensure all users have proper status values and sort by best streak
       const usersWithStatus = data.users
@@ -38,21 +38,20 @@ export const useLeaderboard = () => {
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch users');
-      console.error('Error fetching leaderboard users:', err);
+      
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   const handleLeaderboardUpdate = useCallback((message: any) => { 
-    console.log('📊 Leaderboard update received:', message);
     try {
       if (message.type === 'user_joined') {
         // Get username from the top level (not nested under data)
         const username = message.username || 'Unknown User';
         
         if (!username || username === 'Unknown User') {
-          console.error('❌ Could not extract username from message:', message);
+          
           return; // Don't add user without username
         }
         
@@ -102,7 +101,7 @@ export const useLeaderboard = () => {
         setUsers(prevUsers => prevUsers.filter(u => u.session_id !== message.session_id));
       } else if (message.type === 'streak_update') {
         // Update user streak and resort the list
-        console.log('🔥 Leaderboard processing streak_update:', message);
+        
         setUsers(prevUsers => {
           const updatedUsers = prevUsers.map(user => 
             user.session_id === message.session_id 
@@ -111,16 +110,14 @@ export const useLeaderboard = () => {
           );
           
           // If this is a new personal best, log it
-          if (message.is_new_best) {
-            console.log(`🏆 New personal best streak for ${message.username}: ${message.best_streak}!`);
-          }
+          
           
           // Sort by best streak in descending order
           return updatedUsers.sort((a: LeaderboardUser, b: LeaderboardUser) => b.best_streak - a.best_streak);
         });
       }
     } catch (error) {
-      console.error('❌ Error processing leaderboard update:', error, 'Message:', message);
+      
     }
   }, []);
 

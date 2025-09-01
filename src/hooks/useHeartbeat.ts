@@ -17,9 +17,8 @@ export const useUserStatus = () => {
     
     try {
       sendStatusUpdate(status);
-      console.log(`📤 Status update sent: ${status}`);
     } catch (error) {
-      console.error('❌ Failed to send status update:', error);
+      
     }
   }, [sessionId, sendStatusUpdate]);
 
@@ -49,7 +48,7 @@ export const useUserStatus = () => {
       if (timeSinceLastActivity > 120000 && currentStatusRef.current === 'online') {
         currentStatusRef.current = 'away';
         updateUserStatus('away');
-        console.log('⏰ User marked as away due to inactivity (2 minutes)');
+        
       }
     }, 30000); // Check every 30 seconds
   }, [updateUserStatus]);

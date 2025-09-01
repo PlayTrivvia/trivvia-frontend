@@ -43,7 +43,6 @@ export const useGameState = () => {
       }
     } catch (err) {
       setError('Failed to fetch game state')
-      console.error('Error fetching game state:', err)
     } finally {
       setIsLoading(false)
     }

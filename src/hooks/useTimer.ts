@@ -20,17 +20,18 @@ export const useTimer = () => {
   const fetchTimerValue = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('http://localhost:8081/timer');
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/timer`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log('⏰ Fetched initial timer value:', data.time_left);
+      
       setTimeLeft(data.time_left);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch timer value');
-      console.error('Error fetching timer value:', err);
+      
       // Fallback to 10 minutes if fetch fails
       setTimeLeft(600);
     } finally {
@@ -41,10 +42,10 @@ export const useTimer = () => {
   // Handle timer events from WebSocket
   const handleTimerUpdate = useCallback((message: any) => {
     if (message.type === 'timer_tick') {
-      console.log('⏰ Timer tick:', message.time_left);
+      
       setTimeLeft(message.time_left);
     } else if (message.type === 'score_reset') {
-      console.log('🔄 Score reset event received');
+      
       // Timer will be reset to 10 minutes by the backend
       setTimeLeft(600);
     }
