@@ -7,7 +7,12 @@ export interface WebSocketMessage {
   data?: any;
 }
 
-export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?: (data: any) => void) => {
+export const useWebSocket = (
+  onSessionDropped: () => void, 
+  onLeaderboardUpdate?: (data: any) => void,
+  onChatMessage?: (data: any) => void,
+  onTimerUpdate?: (data: any) => void
+) => {
   const { sessionId } = useAppSelector((state) => state.username);
   const wsRef = useRef<WebSocket | null>(null);
   const isConnectingRef = useRef(false);
@@ -18,53 +23,46 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
   // Store callbacks in refs to prevent unnecessary reconnections
   const onSessionDroppedRef = useRef(onSessionDropped);
   const onLeaderboardUpdateRef = useRef(onLeaderboardUpdate);
+  const onChatMessageRef = useRef(onChatMessage);
+  const onTimerUpdateRef = useRef(onTimerUpdate);
   
   // Debug sessionId changes
   useEffect(() => {
     if (lastSessionIdRef.current !== sessionId) {
-      console.log('🔄 sessionId changed from:', lastSessionIdRef.current, 'to:', sessionId);
       lastSessionIdRef.current = sessionId;
       // Reset connection state when sessionId changes
       hasConnectedRef.current = false;
-    } else {
-      console.log('🔄 sessionId unchanged:', sessionId);
     }
   });
 
   // Update refs when callbacks change
-  useEffect(() => {
-    console.log('🔄 Callback refs updated');
+  useEffect(() => {               
     onSessionDroppedRef.current = onSessionDropped;
     onLeaderboardUpdateRef.current = onLeaderboardUpdate;
-  }, [onSessionDropped, onLeaderboardUpdate]);
+    onChatMessageRef.current = onChatMessage;
+    onTimerUpdateRef.current = onTimerUpdate;
+  }, [onSessionDropped, onLeaderboardUpdate, onChatMessage, onTimerUpdate]);
 
   const connect = useCallback(() => {
-    console.log('🔌 connect() called with sessionId:', sessionId);
-    
     if (!sessionId) {
-      console.log('No sessionId available, skipping WebSocket connection');
       return;
     }
 
     // Prevent duplicate connections
     if (isConnectingRef.current) {
-      console.log('Already connecting, skipping duplicate connection attempt');
       return;
     }
 
     // Don't create a new connection if one already exists
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      console.log('WebSocket already connected, skipping new connection');
       return;
     }
 
     isConnectingRef.current = true;
-    console.log('🔄 Creating WebSocket connection for session:', sessionId);
     const wsUrl = `ws://localhost:8081/ws?session_id=${sessionId}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
-      console.log('✅ WebSocket connected for session:', sessionId);
       isConnectingRef.current = false;
       hasConnectedRef.current = true;
     };
@@ -74,35 +72,62 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
     if ('addEventListener' in ws) {
       try {
         ws.addEventListener('ping', () => {
-          console.log('🏓 Received ping from backend, browser auto-responds with pong');
+          // Ping received, browser auto-responds with pong
         });
       } catch (e) {
-        console.log('🏓 Ping event not supported, but pong responses are automatic');
+        // Ping event not supported, but pong responses are automatic
       }
     }
 
     ws.onmessage = (event) => {
-      console.log('📨 WebSocket message received:', event.data);
-      
       try {
         const message: WebSocketMessage = JSON.parse(event.data);
+        console.log('📡 WebSocket message received:', message);
         
         if (message.type === 'user_dropped') {
-          console.log('🔄 User dropped by backend cleanup, redirecting to landing page');
           onSessionDroppedRef.current();
         } else if (message.type === 'user_left') {
-          console.log('🔄 User left, updating leaderboard for everyone');
           // Update leaderboard for all clients (no need to check session_id)
           if (onLeaderboardUpdateRef.current) {
             onLeaderboardUpdateRef.current(message);
           }
-        } else if (message.type === 'user_joined' || message.type === 'user_offline' || message.type === 'user_online') {
-          console.log(`🔄 Leaderboard update: ${message.type} event`);
+        } else if (message.type === 'user_joined' || message.type === 'user_offline' || message.type === 'user_online' || message.type === 'user_away') {
           if (onLeaderboardUpdateRef.current) {
             onLeaderboardUpdateRef.current(message);
           }
+        } else if (message.type === 'chat_message') {
+          if (onChatMessageRef.current) {
+            onChatMessageRef.current(message);
+          }
+        } else if (message.type === 'trivia_question') {
+          console.log('🎯 Received trivia question event:', message);
+          // Handle trivia question from backend (data structure: { type, category, question, difficulty })
+          if (onChatMessageRef.current) {
+            onChatMessageRef.current(message);
+          }
+        } else if (message.type === 'score_update') {
+          // Handle score update from backend
+          if (onChatMessageRef.current) {
+            onChatMessageRef.current(message);
+          }
+        } else if (message.type === 'streak_update') {
+          // Handle streak update from backend
+          console.log('🔥 WebSocket received streak_update:', message);
+          if (onLeaderboardUpdateRef.current) {
+            onLeaderboardUpdateRef.current(message);
+          }
+        } else if (message.type === 'trivia_hint') {
+          // Handle hint from backend
+          if (onChatMessageRef.current) {
+            onChatMessageRef.current(message);
+          }
+        } else if (message.type === 'timer_tick' || message.type === 'score_reset') {
+          // Handle timer events
+          if (onTimerUpdateRef.current) {
+            onTimerUpdateRef.current(message);
+          }
         } else {
-          console.log('Unknown message type:', message.type);
+          // Unknown message type
         }
       } catch (error) {
         console.error('Error parsing WebSocket message:', error);
@@ -110,13 +135,11 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
     };
 
     ws.onclose = (event) => {
-      console.log('❌ WebSocket disconnected:', event.code, event.reason);
       isConnectingRef.current = false;
       wsRef.current = null;
     };
 
     ws.onerror = (error) => {
-      console.error('❌ WebSocket error:', error);
       isConnectingRef.current = false;
     };
 
@@ -124,27 +147,20 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
   }, [sessionId]);
 
   const disconnect = useCallback(() => {
-    console.log('🔌 disconnect() called with sessionId:', sessionId, 'wsRef.current:', wsRef.current?.readyState, 'hasConnected:', hasConnectedRef.current);
-    
     // Don't disconnect if we just connected (prevents React StrictMode cycling)
     if (!hasConnectedRef.current) {
-      console.log('🔌 Skipping disconnect - connection not yet established');
       return;
     }
     
     if (wsRef.current) {
-      console.log('🔌 Disconnecting WebSocket for session:', sessionId);
-      
-      // Send a proper close message before closing
+      // Send user_left event instead of client_disconnect
       try {
         wsRef.current.send(JSON.stringify({
-          type: 'client_disconnect',
-          session_id: sessionId,
-          reason: 'tab_closed'
+          type: 'user_left',
+          session_id: sessionId
         }));
-        console.log('📤 Sent client_disconnect message to backend');
       } catch (error) {
-        console.log('⚠️ Could not send disconnect message:', error);
+        // Could not send user_left message
       }
       
       // Close the WebSocket with a proper close code
@@ -158,11 +174,9 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
   // Main effect - only run when sessionId changes
   useEffect(() => {
     effectRunCountRef.current++;
-    console.log(`🔄 useWebSocket effect #${effectRunCountRef.current} - sessionId:`, sessionId, 'wsRef.current:', wsRef.current?.readyState, 'hasConnected:', hasConnectedRef.current);
     
     // Prevent multiple effect runs with the same sessionId
     if (lastSessionIdRef.current === sessionId && hasConnectedRef.current) {
-      console.log('🔄 Skipping effect - same sessionId and already connected');
       return;
     }
     
@@ -170,8 +184,6 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
       // Only connect if we don't already have a connection
       if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
         connect();
-      } else {
-        console.log('🔄 WebSocket already connected, skipping connection');
       }
     } else {
       disconnect();
@@ -180,16 +192,13 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
     // Add beforeunload listener for graceful tab close
     const handleBeforeUnload = () => {
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-        console.log('🔄 Tab closing, sending graceful disconnect message');
         try {
           wsRef.current.send(JSON.stringify({
-            type: 'client_disconnect',
-            session_id: sessionId,
-            reason: 'tab_closing'
+            type: 'user_left',
+            session_id: sessionId
           }));
-          console.log('📤 Sent client_disconnect message before tab close');
         } catch (error) {
-          console.log('⚠️ Could not send disconnect message before tab close:', error);
+          // Could not send user_left message before tab close
         }
       }
     };
@@ -198,17 +207,12 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
 
     // Cleanup only when component unmounts or sessionId changes
     return () => {
-      console.log(`🧹 useWebSocket cleanup #${effectRunCountRef.current} - sessionId:`, sessionId, 'wsRef.current:', wsRef.current?.readyState, 'hasConnected:', hasConnectedRef.current);
-      
       // Remove beforeunload listener
       window.removeEventListener('beforeunload', handleBeforeUnload);
       
       // Only cleanup if we're actually changing sessions or unmounting
       if (sessionId && hasConnectedRef.current) {
-        console.log('🧹 Cleaning up due to session change or unmount');
         disconnect();
-      } else {
-        console.log('🧹 Skipping cleanup - no established connection to clean up');
       }
     };
   }, [sessionId]);
@@ -217,5 +221,18 @@ export const useWebSocket = (onSessionDropped: () => void, onLeaderboardUpdate?:
     isConnected: wsRef.current?.readyState === WebSocket.OPEN,
     connectionState: wsRef.current?.readyState,
     sessionId,
+    sendMessage: (message: any) => {
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify(message));
+      }
+    },
+    sendStatusUpdate: (status: 'online' | 'away') => {
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        wsRef.current.send(JSON.stringify({
+          type: status === 'online' ? 'user_online' : 'user_away',
+          status: status
+        }));
+      }
+    },
   };
 };

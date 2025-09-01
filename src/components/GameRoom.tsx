@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useLeaderboard } from '../hooks/useLeaderboard';
+import { useGameState } from '../hooks/useGameState';
+
+import { useAppSelector } from '../store/hooks';
 import Leaderboard from './Leaderboard';
 import ChatComponent from './ChatComponent';
+import HintDisplay from './HintDisplay';
 import { formatCategory } from '../utils/categoryFormatter';
 import './GameRoom.css';
 
@@ -15,6 +19,7 @@ interface GameRoomProps {
 
 export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange }: GameRoomProps) {
   const navigate = useNavigate();
+  const { sessionId } = useAppSelector((state) => state.username);
   const [showWelcome, setShowWelcome] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -26,9 +31,13 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
     difficulty: string;
   } | null>(null);
   
-  // Timer state
-  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes in seconds
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [currentHint, setCurrentHint] = useState<{
+    hint: string;
+    done: boolean;
+  } | null>(null);
+  
+  // Timer state - now using synchronized timer
+
 
   const [messages, setMessages] = useState<Array<{
     id: number;
@@ -36,21 +45,212 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
     message: string;
     timestamp: string;
     type: 'chat' | 'answer' | 'bot';
+    isOwnMessage?: boolean;
+    sessionId?: string;
   }>>([]);
 
-  // store the last correct answer + who answered first
-  const [lastCorrectAnswer, setLastCorrectAnswer] = useState<{
-    answer: string;
-    player: string;
-  } | null>(null);
+  const [isLoadingChatHistory, setIsLoadingChatHistory] = useState(false);
+
 
   // Real-time leaderboard data
   const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate } = useLeaderboard();
+  
+  // Function to handle score updates
+  const handleScoreUpdate = (scoreData: any) => {
+    if (scoreData.type === 'score_update') {
+      // Update the leaderboard with the new score
+      onLeaderboardUpdate({
+        type: 'score_update',
+        session_id: scoreData.session_id,
+        username: scoreData.username,
+        score: scoreData.score
+      });
+    }
+  };
+
+  // Bot messages and trivia questions are now handled automatically by the backend
+  // No need to fetch trivia questions or send bot messages from the frontend
+  // The backend broadcasts:
+  // 1. Trivia questions via websocket with type: 'trivia_question' (direct data structure, comes immediately on login)
+  // 2. Bot messages via websocket with session_id: 'bot_session'
+  // 3. Chat messages via websocket broadcast
+
+  // Function to load chat history
+  const loadChatHistory = async () => {
+    try {
+      setIsLoadingChatHistory(true);
+      const response = await fetch('http://localhost:8081/get_chat_history');
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.messages && Array.isArray(data.messages)) {
+          
+          // Convert backend chat messages to frontend message format
+          const reconstructedMessages = data.messages
+            .filter((msg: any) => msg.message_body && msg.message_body.trim() !== '') // Filter out empty messages
+            .map((msg: any) => {
+              
+              // Determine message type and if it's from the current user
+              const isBotMessage = msg.message_sender === 'Trivvia Bot' || msg.session_id === 'bot_session';
+              const isOwnMessage = msg.session_id === sessionId; // Compare session IDs to identify own messages
+              
+              return {
+                id: Date.now() + Math.random(), // Generate unique ID
+                player: msg.message_sender || 'Unknown User', // Use message_sender from backend (username)
+                message: msg.message_body,
+                timestamp: msg.message_timestamp > 0 
+                  ? new Date(msg.message_timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                type: isBotMessage ? 'bot' as const : 'chat' as const,
+                messageType: isBotMessage ? 'bot_message' : 'user_chat',
+                originalTimestamp: msg.message_timestamp > 0 ? msg.message_timestamp : Math.floor(Date.now() / 1000),
+                isOwnMessage: isOwnMessage, // Add flag to identify own messages
+                sessionId: msg.session_id // Include session ID for debugging
+              };
+            });
+          
+          // Sort messages by original timestamp to ensure proper chronological order
+          const sortedMessages = reconstructedMessages.sort((a: any, b: any) => {
+            return a.originalTimestamp - b.originalTimestamp;
+          });
+          
+          setMessages(sortedMessages);
+        }
+      } else {
+        console.error('❌ Failed to load chat history:', response.status);
+      }
+    } catch (error) {
+      console.error('❌ Error loading chat history:', error);
+    } finally {
+      setIsLoadingChatHistory(false);
+    }
+  };
+
+  // Function to fetch current question when user joins
+  const fetchCurrentQuestion = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/current_question');
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.question && data.category && data.difficulty) {
+          setCurrentQuestion({
+            id: 'current_' + Date.now(),
+            question: decodeHtmlEntities(data.question),
+            category: decodeHtmlEntities(data.category),
+            difficulty: decodeHtmlEntities(data.difficulty),
+          });
+        }
+      } else {
+        console.error('❌ Failed to fetch current question:', response.status);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching current question:', error);
+    }
+  };
+
+  // Function to fetch current hint when user joins
+  const fetchCurrentHint = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/current_hint');
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.hint) {
+          setCurrentHint({
+            hint: decodeHtmlEntities(data.hint),
+            done: false
+          });
+        }
+      } else if (response.status === 404) {
+        // No hint available yet, which is fine
+        console.log('ℹ️ No current hint available');
+      } else {
+        console.error('❌ Failed to fetch current hint:', response.status);
+      }
+    } catch (error) {
+      console.error('❌ Error fetching current hint:', error);
+    }
+  };
 
   // WebSocket connection
-  useWebSocket(() => {
+  const { isConnected, sendMessage } = useWebSocket(() => {
     navigate('/');
-  }, onLeaderboardUpdate);
+  }, onLeaderboardUpdate, (chatData) => {
+    // Handle incoming websocket messages
+    // Handle incoming websocket messages
+    
+    // Handle trivia questions - this event comes immediately on login with current question
+    // Data structure: { type, category, question, difficulty } (direct, not nested under 'data')
+    if (chatData?.type === 'trivia_question') {
+      console.log('🎯 Processing trivia question event:', chatData);
+      console.log('🎯 Question details:', {
+        type: chatData.type,
+        category: chatData.category,
+        question: chatData.question,
+        difficulty: chatData.difficulty
+      });
+      console.log('🎯 Raw trivia question event data:', chatData);
+      
+      setCurrentQuestion({
+        id: chatData.type + '_' + Date.now(), // Generate unique ID since backend doesn't provide one
+        question: decodeHtmlEntities(chatData.question),
+        category: decodeHtmlEntities(chatData.category),
+        difficulty: decodeHtmlEntities(chatData.difficulty),
+      });
+      
+      // Clear hint when new question comes in
+      setCurrentHint(null);
+      return;
+    }
+    
+    // Handle score updates
+    if (chatData?.type === 'score_update') {
+      handleScoreUpdate(chatData);
+      return;
+    }
+    
+    // Handle hints
+    if (chatData?.type === 'trivia_hint') {
+      console.log('💡 Received hint:', chatData);
+      setCurrentHint({
+        hint: chatData.hint,
+        done: chatData.done
+      });
+      return;
+    }
+    
+    // Check if this is a chat message with the new broadcast structure
+    if (chatData?.type === 'chat_message' && chatData?.message_sender && chatData?.message_body) {
+      try {
+        // Determine message type and if it's from the current user
+        const isBotMessage = chatData.message_sender === 'TrivviaBot' || chatData.session_id === 'bot_session';
+        const isOwnMessage = chatData.session_id === sessionId; // Compare session IDs to identify own messages
+        
+        // Create a new message object using the broadcast structure
+        const newMessage = {
+          id: Date.now(),
+          player: chatData.message_sender || 'Unknown User',
+          message: chatData.message_body,
+          timestamp: new Date((chatData.message_timestamp || Date.now() / 1000) * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          type: isBotMessage ? 'bot' as const : 'chat' as const,
+          messageType: isBotMessage ? 'bot_message' : 'user_chat',
+          isOwnMessage: isOwnMessage, // Add flag to identify own messages
+          sessionId: chatData.session_id // Include session ID for debugging
+        };
+        
+        // Add the message to the state
+        setMessages(prev => [...prev, newMessage]);
+        
+        // If this is a bot message indicating a correct answer, the backend will broadcast the next question
+        if (isBotMessage && chatData.message_body.includes('Correct! The answer is')) {
+          // Correct answer detected, waiting for next question from backend
+        }
+      } catch (error) {
+        console.error('Error processing chat message:', error);
+      }
+    }
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -59,38 +259,25 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
         setShowWelcome(false);
         setIsTransitioning(false);
         onLoadingStateChange(false);
-        fetchTriviaQuestion();
+        
+        // Load chat history when the game starts
+        loadChatHistory();
+        
+        // Fetch current question when user joins
+        fetchCurrentQuestion();
+        
+        // Fetch current hint when user joins
+        fetchCurrentHint();
+        
+        // Welcome message and trivia question will be sent by backend via websocket
       }, 300);
     }, 1500);
 
     onLoadingStateChange(true);
     return () => clearTimeout(timer);
-  }, [onLoadingStateChange]);
+  }, [onLoadingStateChange, playerName]);
 
-  // Timer effect
-  useEffect(() => {
-    let interval: number;
-    
-    if (isTimerRunning && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0) {
-      // Timer ran out, reset to 10 minutes
-      setTimeLeft(600);
-    }
-    
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [isTimerRunning, timeLeft]);
 
-  // Start timer when component mounts
-  useEffect(() => {
-    setIsTimerRunning(true);
-  }, []);
 
   const decodeHtmlEntities = (text: string) => {
     const textarea = document.createElement('textarea');
@@ -98,83 +285,24 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
     return textarea.value;
   };
 
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  };
 
-  const fetchTriviaQuestion = async () => {
-    try {
-      const response = await fetch('http://localhost:8081/get_trivia_question');
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentQuestion({
-          id: data.id,
-          question: decodeHtmlEntities(data.question),
-          category: decodeHtmlEntities(data.category),
-          difficulty: decodeHtmlEntities(data.difficulty),
-        });
-        // reset last correct answer when new question is fetched
-        setLastCorrectAnswer(null);
-      }
-    } catch (error) {
-      console.error('Failed to fetch trivia question:', error);
-    }
-  };
+
+
+
 
   const handleSendMessage = async (message: string) => {
-    // always add chat message immediately
-    const newMessage = {
-      id: Date.now(),
-      player: playerName,
-      message,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      type: 'chat' as const,
-    };
-    setMessages(prev => [...prev, newMessage]);
-  
-    // then check if it's correct
-    if (currentQuestion && message.trim().length > 0) {
-      try {
-        const response = await fetch('http://localhost:8081/check_answer', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: currentQuestion.id,
-            answer: message.trim(),
-          }),
-        });
-  
-        if (response.ok) {
-          const result = await response.json();
-          if (result.correct === true) {
-            // Bot message (multi-line)
-            const botMessage = {
-              id: Date.now() + 1,
-              player: 'Trivvia Bot',
-              message: `<span class="bot-question">${decodeHtmlEntities(currentQuestion.question)}</span><br/>Correct! The answer is: ${decodeHtmlEntities(result.answer)}<br/>First to answer: @${playerName}`,
-              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              type: 'bot' as const,
-            };
-            
-  
-            setMessages(prev => [...prev, botMessage]);
-  
-            // set first correct answer (only once)
-            setLastCorrectAnswer(prev => prev ?? {
-              answer: result.answer,
-              player: playerName,
-            });
-  
-            setTimeout(() => {
-              fetchTriviaQuestion();
-            }, 2000);
-          }
-        }
-      } catch (error) {
-        console.error('Failed to check answer:', error);
-      }
+    // Send chat message through WebSocket with the correct payload structure
+    if (isConnected && sendMessage) {
+      const chatMessagePayload = {
+        type: "chat_message",
+        message_body: message,  
+        message_sender: playerName,
+        message_timestamp: Math.floor(Date.now() / 1000) // Convert to Unix timestamp
+      };
+      
+      sendMessage(chatMessagePayload);
+    } else {
+      // WebSocket not connected or sendMessage not available
     }
   };
   
@@ -227,8 +355,6 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
               currentPlayer={playerName}
               isLoading={leaderboardLoading}
               error={null}
-              timerValue={timeLeft}
-              formatTime={formatTime}
             />
           </div>
         )}
@@ -241,8 +367,6 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
             currentPlayer={playerName}
             isLoading={leaderboardLoading}
             error={null}
-            timerValue={timeLeft}
-            formatTime={formatTime}
           />
         </aside>
 
@@ -255,12 +379,21 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
 
             <div className="question-content">
               <h2 className="question-text">{currentQuestion?.question || 'Loading trivia question...'}</h2>
+              
+              {/* Display hint below the question */}
+              {currentHint && (
+                <HintDisplay 
+                  hint={currentHint.hint}
+                  done={currentHint.done}
+                />
+              )}
             </div>
 
             <ChatComponent
               messages={messages}
               onSendMessage={handleSendMessage}
               currentPlayer={playerName}
+              isLoadingHistory={isLoadingChatHistory}
             />
           </div>
         </main>

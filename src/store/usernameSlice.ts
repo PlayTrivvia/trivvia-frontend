@@ -41,39 +41,10 @@ export const generateUsername = createAsyncThunk(
   }
 );
 
-// Async thunk for releasing username
-export const releaseUsername = createAsyncThunk(
-  'username/release',
-  async (session_id: string, { rejectWithValue }) => {
-    try {
-      const response = await fetch('http://localhost:8081/release_username', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ session_id }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return session_id;
-    } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Failed to release username');
-    }
-  }
-);
-
 const usernameSlice = createSlice({
   name: 'username',
   initialState,
   reducers: {
-    clearUsername: (state) => {
-      state.currentUsername = '';
-      state.sessionId = '';
-      state.error = null;
-    },
     setUsername: (state, action: PayloadAction<string>) => {
       state.currentUsername = action.payload;
       state.error = null;
@@ -95,23 +66,9 @@ const usernameSlice = createSlice({
       .addCase(generateUsername.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
-      })
-      // Release username
-      .addCase(releaseUsername.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(releaseUsername.fulfilled, (state) => {
-        state.isLoading = false;
-        state.currentUsername = '';
-        state.sessionId = '';
-        state.error = null;
-      })
-      .addCase(releaseUsername.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
       });
   },
 });
 
-export const { clearUsername, setUsername } = usernameSlice.actions;
+export const {setUsername } = usernameSlice.actions;
 export default usernameSlice.reducer;

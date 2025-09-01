@@ -32,24 +32,23 @@
   border: 1px solid var(--color-border);
 }
 
-/* Base timer (desktop defaults) */
+/* Timer styles commented out - functionality removed
 .timer-bar {
-  width: 60px;   /* match timer-text width for consistent layout */
+  min-width: 60px;
   height: 8px;
   background: var(--color-border);
   border-radius: 4px;
   overflow: hidden;
-  flex-shrink: 0; /* ✅ don't let flex squash it */
-  margin-left: 16px;
+  flex-shrink: 0;
 }
 
 .timer {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 24px;
-  flex: 1;
   min-width: 0;
   position: relative;
+  margin-right: auto;
 }
 
 .timer-text {
@@ -57,12 +56,10 @@
   color: var(--color-text-primary);
   font-size: var(--text-sm);
   white-space: nowrap;
-  text-align: center;
-  width: 60px;
+  text-align: left;
+  min-width: 60px;
   flex-shrink: 0;
 }
-
-
 
 .timer-progress {
   height: 100%;
@@ -70,10 +67,12 @@
   transition: width 1s linear;
   border-radius: 4px;
 }
+*/
 
 .leaderboard-list {
   max-height: 400px;
   overflow-y: auto;
+  transition: all 0.3s ease;
 }
 
 .leaderboard-list::-webkit-scrollbar {
@@ -98,8 +97,9 @@
   align-items: center;
   padding: var(--spacing-md) var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
-  transition: background-color 0.2s ease;
+  transition: all 0.3s ease;
   gap: var(--spacing-md);
+  transform: translateZ(0); /* Enable hardware acceleration for smooth animations */
 }
 
 .player-item:hover {
@@ -120,9 +120,25 @@
   opacity: 0.6;
 }
 
+.player-item.away {
+  opacity: 0.8;
+  background: rgba(245, 158, 11, 0.05);
+  border-left: 2px solid #f59e0b;
+}
+
+.player-item.updating {
+  background: rgba(34, 197, 94, 0.05);
+  border-left: 3px solid var(--color-success);
+}
+
 .player-rank {
   min-width: 40px;
   text-align: center;
+  transition: all 0.3s ease;
+}
+
+.player-rank.updating {
+  transform: scale(1.1);
 }
 
 .rank-icon {
@@ -170,6 +186,10 @@
   color: var(--color-success);
 }
 
+.status-indicator.away {
+  color: #f59e0b;
+}
+
 .status-indicator.offline {
   color: var(--color-text-muted);
 }
@@ -188,6 +208,14 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+  transition: all 0.3s ease;
+}
+
+.player-score.updating {
+  transform: scale(1.1);
+  color: var(--color-success);
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(34, 197, 94, 0.3);
 }
 
 .player-score.high-score {
@@ -227,7 +255,7 @@
   color: var(--color-error);
 }
 
-/* Mobile adjustments */
+/* Tablet and small desktop adjustments */
 @media (max-width: 1024px) {
   .leaderboard {
     margin-bottom: var(--spacing-lg);
@@ -250,9 +278,19 @@
   .player-status {
     align-self: flex-end;
   }
+  
+  /* .timer {
+    gap: 16px;
+    margin-right: auto;
+    margin-left: -6px;
+  }
+  
+  .timer-bar {
+    margin-left: 0;
+  } */
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .leaderboard {
     border-width: 1px;
     border-radius: 8px;
@@ -261,6 +299,9 @@
 
   .leaderboard-header {
     padding: var(--spacing-xs) var(--spacing-sm);
+    display: flex;
+    justify-content: space-between; /* title left, count right */
+    align-items: center;
   }
 
   .leaderboard-title {
@@ -270,26 +311,6 @@
   .leaderboard-footer {
     padding: var(--spacing-xs) var(--spacing-sm);
   }
-  
-  .timer {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    justify-content: flex-start;
-  }
-
-  .timer-text {
-    font-size: var(--text-xs);
-    width: auto !important;  /* ✅ let text size naturally */
-    min-width: 40px;         /* small safeguard */
-    text-align: left;        /* ✅ no forced centering */
-  }
-
-  .timer-bar {
-    height: 6px;
-    width: 20px;
-  }
-  
   .player-count {
     font-size: var(--text-xs) !important;
     padding: 2px var(--spacing-xs);
@@ -358,6 +379,33 @@
   .leaderboard-list::-webkit-scrollbar-thumb {
     border-radius: 2px;
   }
+
+  /* .timer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-start;
+    margin: 0;
+  }
+  
+  .timer-bar {
+    flex: 1;
+    overflow: hidden;
+    width: 20px;
+  }
+
+  .timer-text {
+    text-align: left;
+    min-width: auto;
+  }
+
+  .timer-progress {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-success), var(--color-warning));
+    transition: width 1s linear;
+    border-radius: 4px;
+  } */
 }
 
 @media (max-width: 480px) {
@@ -368,6 +416,9 @@
 
   .leaderboard-header {
     padding: 6px var(--spacing-xs);
+    display: flex;
+    justify-content: space-between; /* title left, count right */
+    align-items: center;
   }
 
   .leaderboard-title {
@@ -425,4 +476,20 @@
   .leaderboard-list {
     max-height: 250px;
   }
+
+  /* .timer {
+    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .timer-text {
+    text-align: left;
+    min-width: auto;
+  }
+
+  .timer-bar {
+    flex: 1;
+    margin: 0;
+  } */
 }

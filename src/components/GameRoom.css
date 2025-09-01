@@ -174,7 +174,7 @@
 }
 
 /* Show header leaderboard only on mobile */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .header-leaderboard {
     display: block;
     position: fixed;
@@ -299,7 +299,7 @@
 
 
 /* Mobile timer adjustments */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .timer {
     padding: var(--spacing-xs);
     gap: var(--spacing-xs);
@@ -411,9 +411,115 @@
     order: -1;
     min-height: auto;
   }
+  
+  /* Hide sidebar leaderboard at 1024px and below */
+  .game-sidebar {
+    display: none;
+  }
+  
+  /* Show mobile menu button at 1024px and below */
+  .mobile-menu-button {
+    display: block !important;
+    background: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    cursor: pointer;
+    padding: var(--spacing-sm) !important;
+    margin-right: var(--spacing-sm);
+    transition: transform 0.3s ease;
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+  }
+  
+  .mobile-menu-button:hover {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  .mobile-menu-button:active,
+  .mobile-menu-button:focus,
+  .mobile-menu-button:focus-visible,
+  .mobile-menu-button:focus-within {
+    background: #ffffff !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  .mobile-menu-button.expanded {
+    transform: rotate(180deg) scaleX(-1);
+  }
+  
+  /* Show header leaderboard at 1024px and below */
+  .header-leaderboard {
+    display: block;
+    position: fixed;
+    top: 50px;                 /* height of header */
+    left: 0;
+    right: 0;
+    bottom: 0;                 /* extend to bottom of screen */
+    z-index: 1000;
+    background: #ffffff;
+    padding: var(--spacing-md);
+    height: calc(100vh - 50px);   /* fill viewport below header */
+    height: calc(100dvh - 50px);  /* fix for mobile dynamic viewport */
+    overflow-y: auto;
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  /* Adjust header for 1024px */
+  .header-main {
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+  
+  .game-title {
+    font-size: var(--text-xl);
+  }
+  
+  .player-welcome {
+    font-size: var(--text-sm);
+  }
+  
+  /* Mobile leaderboard styling for 1024px and below */
+  .header-leaderboard .leaderboard-title {
+    font-size: var(--text-base);
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .header-leaderboard .player-count {
+    font-size: var(--text-sm);
+  }
+  
+  .header-leaderboard .player-name {
+    font-size: var(--text-sm);
+    line-height: 1.2;
+  }
+  
+  .header-leaderboard .player-score {
+    font-size: var(--text-xs);
+    line-height: 1.2;
+  }
+  
+  .header-leaderboard .scoring-info {
+    font-size: var(--text-xs);
+    padding: var(--spacing-sm);
+  }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .welcome-content {
     padding: var(--spacing-lg);
     max-width: 90%;
@@ -472,7 +578,7 @@
 }
 
 /* Mobile-specific styles for chat-like experience */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .game-room {
     height: 100vh;
     height: 100dvh; /* Use dynamic viewport height for mobile */
@@ -514,34 +620,7 @@
     display: none; /* Hide leave button on mobile */
   }
   
-  .header-leaderboard {
-    padding: var(--spacing-md);
-  }
-  
-  /* Mobile leaderboard styling */
-  .header-leaderboard .leaderboard-title {
-    font-size: var(--text-base); /* or even var(--text-sm) */
-    margin-bottom: var(--spacing-sm); /* tighten spacing too */
-  }
-  
-  .header-leaderboard .player-count {
-    font-size: var(--text-sm);
-  }
-  
-  .header-leaderboard .player-name {
-    font-size: var(--text-sm);
-    line-height: 1.2;
-  }
-  
-  .header-leaderboard .player-points {
-    font-size: var(--text-xs);
-    line-height: 1.2;
-  }
-  
-  .header-leaderboard .scoring-hint {
-    font-size: var(--text-xs);
-    padding: var(--spacing-sm);
-  }
+
   
   .game-layout {
     grid-template-columns: 1fr;
@@ -639,55 +718,5 @@
 /* Hide mobile menu button on desktop */
 .mobile-menu-button {
   display: none;
-}
-
-/* Show mobile menu button only on mobile */
-@media (max-width: 768px) {
-  .mobile-menu-button {
-    display: block !important;
-    background: #ffffff !important;
-    border: none !important;
-    outline: none !important;
-    cursor: pointer;
-    padding: var(--spacing-sm) !important;
-    margin-right: var(--spacing-sm);
-    transition: transform 0.3s ease;
-    width: 40px !important;
-    height: 40px !important;
-    border-radius: 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    box-shadow: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    user-select: none !important;
-  }
-  
-  .mobile-menu-button:hover {
-    background: #ffffff !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  
-  .mobile-menu-button:active,
-  .mobile-menu-button:focus,
-  .mobile-menu-button:focus-visible,
-  .mobile-menu-button:focus-within {
-    background: #ffffff !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    -webkit-tap-highlight-color: transparent !important;
-  }
-  
-  .mobile-menu-button.expanded {
-    transform: rotate(180deg) scaleX(-1);
-  }
-  
-
 }
 

@@ -7,15 +7,20 @@ export interface Message {
   message: string
   timestamp: string
   type: 'chat' | 'answer' | 'bot'
+  messageType?: string
+  originalTimestamp?: number
+  isOwnMessage?: boolean
+  sessionId?: string
 }
 
 interface ChatComponentProps {
   messages: Message[]
   onSendMessage: (message: string) => void
   currentPlayer: string
+  isLoadingHistory?: boolean
 }
 
-function ChatComponent({ messages, onSendMessage, currentPlayer }: ChatComponentProps) {
+function ChatComponent({ messages, onSendMessage, currentPlayer, isLoadingHistory }: ChatComponentProps) {
   const [newMessage, setNewMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
@@ -40,46 +45,84 @@ function ChatComponent({ messages, onSendMessage, currentPlayer }: ChatComponent
     return timestamp
   }
 
+  const renderBotMessage = (message: string, messageType?: string) => {
+    let formattedMessage = message
+      .replace(/\n/g, '<br/>') // Convert newlines to <br/>
+      .replace(/@(\w+)/g, '<span class="mention">@$1</span>') // Highlight mentions
+      .replace(/"/g, '&quot;') // Escape quotes
+      .replace(/'/g, '&#39;'); // Escape apostrophes
+
+    // Apply specific formatting based on message content patterns
+    if (message.includes('Question:') && message.includes('Correct! The answer is:')) {
+      // Format answer messages with special styling
+      formattedMessage = formattedMessage
+        .replace(/(Question: )(.+?)(\n)/, '<span class="bot-question">$1$2</span>$3')
+        .replace(/(Correct! The answer is: )(.+?)(\n|$)/, '$1<span class="answer-highlight">$2</span>$3')
+        .replace(/(First to answer: )(.+?)(\n|$)/, '$1<span class="first-responder">$2</span>$3');
+    } else if (message.includes('Welcome to Trivvia')) {
+      // Format welcome messages
+      formattedMessage = formattedMessage
+        .replace(/(Welcome to Trivvia, )(.+?)(!)/, '$1<span class="player-name">$2</span>$3');
+    }
+
+    return formattedMessage;
+  }
+
+  const renderUserMessage = (message: string) => {
+    return message
+      .replace(/\n/g, '<br/>') // Convert newlines to <br/>
+      .replace(/"/g, '&quot;') // Escape quotes
+      .replace(/'/g, '&#39;'); // Escape apostrophes
+  }
+
   return (
     <div className="chat-component">
-
+      {isLoadingHistory && (
+        <div className="chat-history-loading">
+          <div className="loading-spinner"></div>
+          <span>Loading chat history...</span>
+        </div>
+      )}
 
       <div className="chat-messages" ref={messagesContainerRef}>
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={`message ${message.type} ${
-              message.player === currentPlayer ? 'own-message' : ''
-            }`}
-          >
-            <div className="message-header">
-              <span className="message-player">{message.player}</span>
-              <span className="message-timestamp">
-                {formatTimestamp(message.timestamp)}
-              </span>
+        {messages.map((message) => {
+          return (
+            <div
+              key={message.id}
+              className={`message ${message.type} ${
+                message.isOwnMessage ? 'own-message' : ''
+              }`}
+            >
+              <div className="message-header">
+                <span className="message-player">{message.player}</span>
+                <span className="message-timestamp">
+                  {formatTimestamp(message.timestamp)}
+                </span>
+              </div>
+              <div className="message-content">
+                {message.type === 'answer' && (
+                  <span className="answer-prefix">💡 </span>
+                )}
+                {message.type === 'bot' && (
+                  <span className="bot-prefix">🤖 </span>
+                )}
+                {message.type === 'bot' ? (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: renderBotMessage(message.message, message.messageType)
+                    }}
+                  />
+                ) : (
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: renderUserMessage(message.message)
+                    }}
+                  />
+                )}
+              </div>
             </div>
-            <div className="message-content">
-              {message.type === 'answer' && (
-                <span className="answer-prefix">💡 </span>
-              )}
-              {message.type === 'bot' && (
-                <span className="bot-prefix">🤖 </span>
-              )}
-              {message.type === 'bot' ? (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: message.message.replace(
-                      /(Correct! The answer is: )(.+?)(<br\/>|$)/,
-                      '$1<span class="answer-text">$2</span>$3'
-                    )
-                  }}
-                />
-              ) : (
-                message.message
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
 

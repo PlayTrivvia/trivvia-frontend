@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import IntroPage from './components/IntroPage'
 import GameRoom from './components/GameRoom'
-import Navigation from './components/Navigation'
+
 import { useUserStatus } from './hooks/useHeartbeat'
 import { useAppSelector } from './store/hooks'
 import './App.css'
@@ -32,7 +32,6 @@ function AppContent() {
 
   return (
     <div className="app">
-      <Navigation isGameLoading={isGameLoading} />
       <Routes>
         <Route path="/" element={<IntroPage onJoinGame={handleJoinGame} />} />
         <Route 

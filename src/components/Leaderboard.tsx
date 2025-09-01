@@ -1,12 +1,13 @@
 import './Leaderboard.css'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 
 export interface LeaderboardUser {
   username: string;
   session_id: string;
-  joined_at: number;
-  last_seen_at: number;
+  joined_at?: number;
+  last_seen_at?: number;
   status: 'online' | 'away';
-  score: number;
+  best_streak: number;
 }
 
 interface LeaderboardProps {
@@ -14,20 +15,70 @@ interface LeaderboardProps {
   currentPlayer: string
   isLoading: boolean
   error: string | null
-  timerValue?: number
-  formatTime?: (seconds: number) => string
 }
 
-function Leaderboard({ users, currentPlayer, isLoading, error, timerValue, formatTime }: LeaderboardProps) {
-  // Debug: Log the users array to see their status
-  console.log('📊 Leaderboard received users:', users);
+function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProps) {
+  // State to track which users are updating their scores
+  const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
+  
+  // State to track previous user positions for comparison
+  const [prevUserPositions, setPrevUserPositions] = useState<Map<string, number>>(new Map());
+  
+  // Ref to track if this is the first render
+  const isFirstRender = useRef(true);
   
   // Filter out dropped users (they won't be in the users array anyway)
-  // Show both online and away users
-  const activeUsers = users.filter(user => user.status === 'online' || user.status === 'away');
+  // Show only online and away users - offline users are removed from leaderboard
+  const activeUsers = useMemo(() => {
+    return users.filter(user => user.status === 'online' || user.status === 'away');
+  }, [users]);
   
-  // Sort users by score in descending order
-  const sortedUsers = [...activeUsers].sort((a, b) => b.score - a.score)
+  // Sort users by best streak in descending order - memoized to prevent recreation
+  const sortedUsers = useCallback(() => {
+    return [...activeUsers].sort((a, b) => b.best_streak - a.best_streak);
+  }, [activeUsers]);
+  
+  // Effect to track position changes and show updating animation only for users who moved up
+  useEffect(() => {
+    // Skip the first render to avoid unnecessary position tracking
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    
+    const newUpdatingUsers = new Set<string>();
+    const currentPositions = new Map<string, number>();
+    
+    // Create current position map
+    sortedUsers().forEach((user, index) => {
+      currentPositions.set(user.session_id, index);
+    });
+    
+    // Only check for position changes if we have previous positions (not on initial load)
+    if (prevUserPositions.size > 0) {
+      // Check for users who moved up in position
+      sortedUsers().forEach((user, currentIndex) => {
+        const prevIndex = prevUserPositions.get(user.session_id);
+        if (prevIndex !== undefined && currentIndex < prevIndex) {
+          // User moved up (lower index = higher position)
+          newUpdatingUsers.add(user.session_id);
+        }
+      });
+    }
+    
+    // Update previous positions for next comparison
+    setPrevUserPositions(currentPositions);
+    
+    // Set updating users
+    setUpdatingUsers(newUpdatingUsers);
+    
+    // Remove updating state after animation completes
+    const timer = setTimeout(() => {
+      setUpdatingUsers(new Set());
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [sortedUsers, prevUserPositions.size]); // Only depend on the size, not the entire object
 
   const getRankIcon = (index: number) => {
     switch (index) {
@@ -42,9 +93,9 @@ function Leaderboard({ users, currentPlayer, isLoading, error, timerValue, forma
     }
   }
 
-  const getScoreColor = (score: number) => {
-    if (score >= 400) return 'high-score'
-    if (score >= 250) return 'medium-score'
+  const getScoreColor = (streak: number) => {
+    if (streak >= 10) return 'high-score'
+    if (streak >= 5) return 'medium-score'
     return 'low-score'
   }
 
@@ -79,36 +130,21 @@ function Leaderboard({ users, currentPlayer, isLoading, error, timerValue, forma
   return (
     <div className="leaderboard">
       <div className="leaderboard-header">
-        {timerValue !== undefined && formatTime ? (
-          <div className="timer">
-            <span className="timer-text">
-              Time: {formatTime(timerValue)}
-            </span>
-            <div className="timer-bar">
-              <div 
-                className="timer-progress" 
-                style={{ 
-                  width: `${(timerValue / 600) * 100}%`,
-                  transition: 'width 1s linear'
-                }}
-              ></div>
-            </div>
-          </div>
-        ) : (
-          <h3 className="leaderboard-title">Leaderboard</h3>
-        )}
+        <h3 className="leaderboard-title">Leaderboard</h3>
         <span className="player-count">{activeUsers.length} {activeUsers.length === 1 ? 'player' : 'players'}</span>
       </div>
 
       <div className="leaderboard-list">
-        {sortedUsers.map((user, index) => (
+        {sortedUsers().map((user, index) => (
           <div
             key={user.session_id}
             className={`player-item ${
               user.username === currentPlayer ? 'current-player' : ''
-            } ${user.status === 'away' ? 'offline' : ''}`}
+            } ${user.status === 'away' ? 'away' : ''} ${
+              updatingUsers.has(user.session_id) ? 'updating' : ''
+            }`}
           >
-            <div className="player-rank">
+            <div className={`player-rank ${updatingUsers.has(user.session_id) ? 'updating' : ''}`}>
               <span className="rank-icon">{getRankIcon(index)}</span>
             </div>
             
@@ -119,14 +155,14 @@ function Leaderboard({ users, currentPlayer, isLoading, error, timerValue, forma
                   {user.username === currentPlayer && (
                     <span className="you-badge">You</span>
                   )}
-                  <span className={`status-indicator ${user.status === 'online' ? 'online' : 'offline'}`}>
+                  <span className={`status-indicator ${user.status === 'online' ? 'online' : 'away'}`}>
                     ●
                   </span>
                 </div>
               </div>
-              <div className={`player-score ${getScoreColor(user.score)}`}>
-                {user.score} pts
-              </div>
+                             <div className={`player-score ${getScoreColor(user.best_streak)} ${updatingUsers.has(user.session_id) ? 'updating' : ''}`}>
+                 🔥 {user.best_streak}
+               </div>
             </div>
           </div>
         ))}
@@ -134,7 +170,7 @@ function Leaderboard({ users, currentPlayer, isLoading, error, timerValue, forma
 
       <div className="leaderboard-footer">
         <p className="scoring-info">
-          💡 <strong>Scoring:</strong> Faster answers earn more points!
+          🔥 <strong>Streaks:</strong> Consecutive correct answers build your streak!
         </p>
       </div>
     </div>
