@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useLeaderboard } from '../hooks/useLeaderboard';
-import { useGameState } from '../hooks/useGameState';
 
 import { useAppSelector } from '../store/hooks';
 import Leaderboard from './Leaderboard';
@@ -14,10 +13,9 @@ import './GameRoom.css';
 interface GameRoomProps {
   playerName: string;
   onLeaveGame: () => void;
-  onLoadingStateChange: (loading: boolean) => void;
 }
 
-export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange }: GameRoomProps) {
+export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const navigate = useNavigate();
   const { sessionId } = useAppSelector((state) => state.username);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -258,7 +256,6 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
       setTimeout(() => {
         setShowWelcome(false);
         setIsTransitioning(false);
-        onLoadingStateChange(false);
         
         // Load chat history when the game starts
         loadChatHistory();
@@ -272,10 +269,8 @@ export default function GameRoom({ playerName, onLeaveGame, onLoadingStateChange
         // Welcome message and trivia question will be sent by backend via websocket
       }, 300);
     }, 1500);
-
-    onLoadingStateChange(true);
     return () => clearTimeout(timer);
-  }, [onLoadingStateChange, playerName]);
+      }, [playerName]);
 
 
 

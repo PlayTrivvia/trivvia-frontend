@@ -100,11 +100,6 @@ export const useLeaderboard = () => {
       } else if (message.type === 'user_left') {
         // Remove user from the list (tab close, navigation, reload)
         setUsers(prevUsers => prevUsers.filter(u => u.session_id !== message.session_id));
-      } else if (message.type === 'user_dropped') {
-        // User dropped due to background cleanup (1 hour away)
-        // Don't remove from leaderboard - this is handled by the specific user
-        // The user will be redirected to landing page by their own client
-        console.log('🔄 User dropped due to inactivity:', message.username);
       } else if (message.type === 'streak_update') {
         // Update user streak and resort the list
         console.log('🔥 Leaderboard processing streak_update:', message);

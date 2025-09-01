@@ -84,12 +84,17 @@ export const useWebSocket = (
         const message: WebSocketMessage = JSON.parse(event.data);
         console.log('📡 WebSocket message received:', message);
         
-        if (message.type === 'user_dropped') {
-          onSessionDroppedRef.current();
-        } else if (message.type === 'user_left') {
-          // Update leaderboard for all clients (no need to check session_id)
-          if (onLeaderboardUpdateRef.current) {
-            onLeaderboardUpdateRef.current(message);
+        if (message.type === 'user_left') {
+          // Check if this user_left event is for the current user
+          if (message.session_id === sessionId) {
+            // Current user was removed, redirect to landing page
+            console.log('🚪 Current user left, redirecting to landing page');
+            onSessionDroppedRef.current();
+          } else {
+            // Another user left, update leaderboard
+            if (onLeaderboardUpdateRef.current) {
+              onLeaderboardUpdateRef.current(message);
+            }
           }
         } else if (message.type === 'user_joined' || message.type === 'user_offline' || message.type === 'user_online' || message.type === 'user_away') {
           if (onLeaderboardUpdateRef.current) {
@@ -134,12 +139,12 @@ export const useWebSocket = (
       }
     };
 
-    ws.onclose = (event) => {
+    ws.onclose = () => {
       isConnectingRef.current = false;
       wsRef.current = null;
     };
 
-    ws.onerror = (error) => {
+    ws.onerror = () => {
       isConnectingRef.current = false;
     };
 

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import IntroPage from './components/IntroPage'
 import GameRoom from './components/GameRoom'
@@ -11,7 +10,6 @@ import './App.css'
 function AppContent() {
   const navigate = useNavigate();
   const { currentUsername } = useAppSelector((state) => state.username);
-  const [isGameLoading, setIsGameLoading] = useState(false);
   
   // Start user status monitoring when user is in game
   useUserStatus();
@@ -45,7 +43,6 @@ function AppContent() {
               <GameRoom 
                 playerName={currentUsername} 
                 onLeaveGame={handleLeaveGame}
-                onLoadingStateChange={setIsGameLoading}
               />
             ) : (
               <Navigate to="/" replace />

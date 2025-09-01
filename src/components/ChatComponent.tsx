@@ -20,7 +20,7 @@ interface ChatComponentProps {
   isLoadingHistory?: boolean
 }
 
-function ChatComponent({ messages, onSendMessage, currentPlayer, isLoadingHistory }: ChatComponentProps) {
+function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatComponentProps) {
   const [newMessage, setNewMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
@@ -45,7 +45,7 @@ function ChatComponent({ messages, onSendMessage, currentPlayer, isLoadingHistor
     return timestamp
   }
 
-  const renderBotMessage = (message: string, messageType?: string) => {
+  const renderBotMessage = (message: string) => {
     let formattedMessage = message
       .replace(/\n/g, '<br/>') // Convert newlines to <br/>
       .replace(/@(\w+)/g, '<span class="mention">@$1</span>') // Highlight mentions
@@ -109,7 +109,7 @@ function ChatComponent({ messages, onSendMessage, currentPlayer, isLoadingHistor
                 {message.type === 'bot' ? (
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: renderBotMessage(message.message, message.messageType)
+                      __html: renderBotMessage(message.message)
                     }}
                   />
                 ) : (
