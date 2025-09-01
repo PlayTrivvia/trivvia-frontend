@@ -24,9 +24,7 @@ function AppContent() {
     navigate(-1);
   }
 
-  // No need to handle tab close/window unload - WebSocket handles cleanup automatically
   
-  // No need to handle navigation changes - WebSocket handles cleanup automatically
 
   return (
     <div className="app">

@@ -14,6 +14,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: 48px; /* Ensure consistent height */
 }
 
 .leaderboard-title {
@@ -21,6 +22,11 @@
   font-weight: 600;
   color: var(--color-text-primary);
   margin: 0;
+  padding: 0;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .player-count {
@@ -298,14 +304,21 @@
   }
 
   .leaderboard-header {
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md) !important;
     display: flex;
     justify-content: space-between; /* title left, count right */
     align-items: center;
+    min-height: 44px; /* Ensure consistent height */
   }
 
   .leaderboard-title {
-    font-size: var(--text-base);
+    font-size: var(--text-sm) !important;
+    margin: 0 !important;
+    padding: 0;
+    line-height: inline;
+    display: flex;
+    align-items: center;
+    height: 100%;
   }
 
   .leaderboard-footer {
@@ -323,7 +336,7 @@
     align-items: center;
     justify-content: space-between;
     gap: var(--spacing-xs);
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
     flex-wrap: nowrap;
     border-bottom-width: 1px;
   }
@@ -415,14 +428,20 @@
   }
 
   .leaderboard-header {
-    padding: 6px var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md) !important;
     display: flex;
     justify-content: space-between; /* title left, count right */
     align-items: center;
+    min-height: 40px !important; /* Ensure consistent height */
   }
 
   .leaderboard-title {
-    font-size: var(--text-sm);
+    font-size: var(--text-sm) !important;
+    margin: 0 !important;
+    padding: 0;
+    line-height: 20px;
+    display: block;
+    align-items: center;
   }
 
   .leaderboard-footer {
@@ -430,7 +449,7 @@
   }
 
   .player-item {
-    padding: 6px var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
     gap: 6px;
   }
 

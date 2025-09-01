@@ -177,8 +177,6 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const { isConnected, sendMessage } = useWebSocket(() => {
     navigate('/');
   }, onLeaderboardUpdate, (chatData) => {
-    // Handle incoming websocket messages
-    // Handle incoming websocket messages
     
     // Handle trivia questions - this event comes immediately on login with current question
     // Data structure: { type, category, question, difficulty } (direct, not nested under 'data')
