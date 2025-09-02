@@ -26,7 +26,6 @@ export const useWebSocket = (
   const onChatMessageRef = useRef(onChatMessage);
   const onTimerUpdateRef = useRef(onTimerUpdate);
   
-  // Debug sessionId changes
   useEffect(() => {
     if (lastSessionIdRef.current !== sessionId) {
       lastSessionIdRef.current = sessionId;

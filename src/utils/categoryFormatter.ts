@@ -53,3 +53,10 @@ export function formatCategory(category: string): string {
     .replace(/\bIn\b/g, 'in')
     .replace(/\bOn\b/g, 'on')
 }
+
+export function formatDifficulty(difficulty: string): string {
+  if (!difficulty) return '';
+  
+  // Convert first letter to uppercase and rest to lowercase
+  return difficulty.charAt(0).toUpperCase() + difficulty.slice(1).toLowerCase();
+}

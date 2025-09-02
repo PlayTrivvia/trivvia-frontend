@@ -7,7 +7,7 @@ import { useAppSelector } from '../store/hooks';
 import Leaderboard from './Leaderboard';
 import ChatComponent from './ChatComponent';
 import HintDisplay from './HintDisplay';
-import { formatCategory } from '../utils/categoryFormatter';
+import { formatCategory, formatDifficulty } from '../utils/categoryFormatter';
 import './GameRoom.css';
 
 interface GameRoomProps {
@@ -104,7 +104,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
                 messageType: isBotMessage ? 'bot_message' : 'user_chat',
                 originalTimestamp: msg.message_timestamp > 0 ? msg.message_timestamp : Math.floor(Date.now() / 1000),
                 isOwnMessage: isOwnMessage, // Add flag to identify own messages
-                sessionId: msg.session_id // Include session ID for debugging
+                sessionId: msg.session_id
               };
             });
           
@@ -227,7 +227,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           type: isBotMessage ? 'bot' as const : 'chat' as const,
           messageType: isBotMessage ? 'bot_message' : 'user_chat',
           isOwnMessage: isOwnMessage, // Add flag to identify own messages
-          sessionId: chatData.session_id // Include session ID for debugging
+          sessionId: chatData.session_id
         };
         
         // Add the message to the state
@@ -362,7 +362,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           <div className="unified-chat-section">
             <div className="question-header">
               <span className="question-category">{currentQuestion?.category ? formatCategory(currentQuestion.category) : 'Loading...'}</span>
-              <span className="question-difficulty">{currentQuestion?.difficulty || 'Loading...'}</span>
+              <span className="question-difficulty">{currentQuestion?.difficulty ? formatDifficulty(currentQuestion.difficulty) : 'Loading...'}</span>
             </div>
 
             <div className="question-content">
