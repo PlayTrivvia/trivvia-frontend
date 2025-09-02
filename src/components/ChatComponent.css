@@ -316,7 +316,7 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    border-radius: 0;
+    border-radius: 6px;
     /* Prevent zoom on iOS */
     transform: translateZ(0);
   }
@@ -347,6 +347,31 @@
   
   .answer-text {
     font-size: 0.8em;
+  }
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+  .chat-input-group {
+    align-items: center;
+    gap: var(--spacing-xs);
+  }
+  
+  .chat-input {
+    border-radius: 4px;
+    padding: var(--spacing-sm) var(--spacing-sm);
+    height: 40px; /* Match send button height */
+    box-sizing: border-box;
+    line-height: 1.2;
+    flex: 1;
+  }
+  
+  .send-button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--text-xs);
+    height: 40px; /* Ensure consistent height */
+    box-sizing: border-box;
+    flex-shrink: 0;
   }
 }
 
