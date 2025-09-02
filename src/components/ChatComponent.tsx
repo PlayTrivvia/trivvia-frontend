@@ -18,9 +18,10 @@ interface ChatComponentProps {
   onSendMessage: (message: string) => void
   currentPlayer: string
   isLoadingHistory?: boolean
+  onKeyboardToggle?: (isOpen: boolean) => void
 }
 
-function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatComponentProps) {
+function ChatComponent({ messages, onSendMessage, isLoadingHistory, onKeyboardToggle }: ChatComponentProps) {
   const [newMessage, setNewMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
@@ -38,6 +39,19 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatCompon
     if (newMessage.trim()) {
       onSendMessage(newMessage.trim())
       setNewMessage('')
+    }
+  }
+
+  // Handle input focus/blur for keyboard detection
+  const handleInputFocus = () => {
+    if (onKeyboardToggle) {
+      onKeyboardToggle(true)
+    }
+  }
+
+  const handleInputBlur = () => {
+    if (onKeyboardToggle) {
+      onKeyboardToggle(false)
     }
   }
 
@@ -132,6 +146,8 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatCompon
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onFocus={handleInputFocus}
+              onBlur={handleInputBlur}
               placeholder="Type your answer..."
               className="chat-input"
               maxLength={200}

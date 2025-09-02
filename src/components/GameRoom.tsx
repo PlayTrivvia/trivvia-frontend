@@ -21,6 +21,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const [showWelcome, setShowWelcome] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
   const [currentQuestion, setCurrentQuestion] = useState<{
     id: string;
@@ -293,6 +294,11 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
       // WebSocket not connected or sendMessage not available
     }
   };
+
+  // Handle keyboard open/close detection
+  const handleKeyboardToggle = (isOpen: boolean) => {
+    setIsKeyboardOpen(isOpen);
+  };
   
 
   if (showWelcome) {
@@ -313,8 +319,8 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   }
 
   return (
-    <div className={`game-room ${isTransitioning ? 'fade-in' : ''}`}>
-      <header className={`game-header ${isHeaderExpanded ? 'expanded' : ''}`}>
+    <div className={`game-room ${isTransitioning ? 'fade-in' : ''} ${isKeyboardOpen ? 'keyboard-open' : ''}`}>
+      <header className={`game-header ${isHeaderExpanded ? 'expanded' : ''} ${isKeyboardOpen ? 'collapsed' : ''}`}>
         <div className="header-main">
           <div className="header-left">
             <h1 className="game-title">Trivvia</h1>
@@ -360,7 +366,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
 
         <main className="game-main">
           <div className="unified-chat-section">
-            <div className="question-header">
+            <div className={`question-header ${isKeyboardOpen ? 'collapsed' : ''}`}>
               <span className="question-category">{currentQuestion?.category ? formatCategory(currentQuestion.category) : 'Loading...'}</span>
               <span className="question-difficulty">{currentQuestion?.difficulty ? formatDifficulty(currentQuestion.difficulty) : 'Loading...'}</span>
             </div>
@@ -382,6 +388,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
               onSendMessage={handleSendMessage}
               currentPlayer={playerName}
               isLoadingHistory={isLoadingChatHistory}
+              onKeyboardToggle={handleKeyboardToggle}
             />
           </div>
         </main>
