@@ -343,7 +343,7 @@
 
   .player-item.current-player {
     border-left-width: 3px;
-    padding-left: calc(var(--spacing-sm) - 3px);
+    padding-left: calc(var(--spacing-md) - 3px);
   }
 
   .rank-icon {
@@ -455,7 +455,7 @@
 
   .player-item.current-player {
     border-left-width: 2px;
-    padding-left: calc(var(--spacing-xs) - 2px);
+    padding-left: calc(var(--spacing-md) - 2px);
   }
 
   .rank-icon {
