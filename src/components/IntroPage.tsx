@@ -26,7 +26,7 @@ function IntroPage({ onJoinGame, onGoToAbout }: IntroPageProps) {
         <header className="intro-header">
           <div className="logo-container">
             <img 
-              src="/trivvia-logo-transparent.png" 
+              src="/trivvia-logo-transparent.svg" 
               alt="Trivvia Logo" 
               className="intro-logo"
               loading="eager"
