@@ -13,9 +13,10 @@ import './GameRoom.css';
 interface GameRoomProps {
   playerName: string;
   onLeaveGame: () => void;
+  onGoToAbout: () => void;
 }
 
-export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
+export default function GameRoom({ playerName, onLeaveGame, onGoToAbout }: GameRoomProps) {
   const navigate = useNavigate();
   const { sessionId } = useAppSelector((state) => state.username);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -321,6 +322,13 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
             <span className="player-welcome">Welcome, {playerName}!</span>
           </div>
           <div className="header-right">
+            <button
+              className="about-button secondary"
+              onClick={onGoToAbout}
+              title="About Trivvia"
+            >
+              About
+            </button>
             <button
               className={`mobile-menu-button ${isHeaderExpanded ? 'expanded' : ''}`}
               onClick={() => setIsHeaderExpanded(!isHeaderExpanded)}

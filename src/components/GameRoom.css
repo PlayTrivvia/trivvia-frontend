@@ -168,6 +168,12 @@
   font-size: var(--text-sm);
 }
 
+.about-button {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--text-sm);
+  margin-right: var(--spacing-sm);
+}
+
 /* Hide header leaderboard by default (desktop) */
 .header-leaderboard {
   display: none;

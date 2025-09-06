@@ -3,10 +3,11 @@ import { generateUsername } from '../store/usernameSlice'
 import './IntroPage.css'
 
 interface IntroPageProps {
-  onJoinGame: () => void
+  onJoinGame: () => void;
+  onGoToAbout: () => void;
 }
 
-function IntroPage({ onJoinGame }: IntroPageProps) {
+function IntroPage({ onJoinGame, onGoToAbout }: IntroPageProps) {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.username);
 
@@ -55,6 +56,12 @@ function IntroPage({ onJoinGame }: IntroPageProps) {
           <p className="intro-note">
             Ready to challenge your mind? Join now and start playing!
           </p>
+          <button 
+            onClick={onGoToAbout}
+            className="about-link-button"
+          >
+            About Trivvia
+          </button>
         </footer>
       </div>
     </div>

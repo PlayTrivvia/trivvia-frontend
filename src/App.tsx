@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import IntroPage from './components/IntroPage'
 import GameRoom from './components/GameRoom'
+import AboutPage from './components/AboutPage'
 
 import { useUserStatus } from './hooks/useHeartbeat'
 import { useAppSelector } from './store/hooks'
@@ -24,12 +25,26 @@ function AppContent() {
     navigate(-1);
   }
 
-  
+  const handleGoToAbout = () => {
+    navigate('/about');
+  }
+
+  const handleBackFromAbout = () => {
+    navigate('/');
+  }
 
   return (
     <div className="app">
       <Routes>
-        <Route path="/" element={<IntroPage onJoinGame={handleJoinGame} />} />
+        <Route 
+          path="/" 
+          element={
+            <IntroPage 
+              onJoinGame={handleJoinGame} 
+              onGoToAbout={handleGoToAbout}
+            /> 
+          } 
+        />
         <Route 
           path="/intro" 
           element={<Navigate to="/" replace />} 
@@ -41,11 +56,16 @@ function AppContent() {
               <GameRoom 
                 playerName={currentUsername} 
                 onLeaveGame={handleLeaveGame}
+                onGoToAbout={handleGoToAbout}
               />
             ) : (
               <Navigate to="/" replace />
             )
           } 
+        />
+        <Route 
+          path="/about" 
+          element={<AboutPage onBack={handleBackFromAbout} />} 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
