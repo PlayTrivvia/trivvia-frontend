@@ -12,7 +12,6 @@ function AboutPage({ onBack }: AboutPageProps) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [rateLimitInfo, setRateLimitInfo] = useState<{remaining: number, total: number} | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -54,10 +53,6 @@ function AboutPage({ onBack }: AboutPageProps) {
         setSubmitStatus('success');
         setFormData({ email: '', message: '' });
         
-        // Store rate limit info if provided
-        if (responseData.rateLimit) {
-          setRateLimitInfo(responseData.rateLimit);
-        }
       } else {
         const errorData = await response.json();
         console.error('❌ Contact submission failed:', {
@@ -66,14 +61,6 @@ function AboutPage({ onBack }: AboutPageProps) {
           error: errorData.error
         });
         setSubmitStatus('error');
-        
-        // Handle rate limiting specifically
-        if (response.status === 429) {
-          setRateLimitInfo({
-            remaining: 0,
-            total: errorData.limit || 5
-          });
-        }
       }
     } catch (error) {
       console.error('❌ Contact submission network error:', {
