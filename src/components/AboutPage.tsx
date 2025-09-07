@@ -1,11 +1,10 @@
 import { useState } from 'react';
+import NavigationBar from './NavigationBar';
 import './AboutPage.css';
 
-interface AboutPageProps {
-  onBack: () => void;
-}
+interface AboutPageProps {}
 
-function AboutPage({ onBack }: AboutPageProps) {
+function AboutPage({}: AboutPageProps) {
   const [formData, setFormData] = useState({
     email: '',
     message: ''
@@ -76,13 +75,9 @@ function AboutPage({ onBack }: AboutPageProps) {
 
   return (
     <div className="about-page">
+      <NavigationBar currentPage="about" />
       <div className="about-container">
         <header className="about-header">
-          <div className="about-nav">
-            <button onClick={onBack} className="back-button">
-              ← Back
-            </button>
-          </div>
           <div className="about-title-section">
             <h1 className="about-title">About Trivvia</h1>
             <p className="about-subtitle">Real-time trivia with friends</p>

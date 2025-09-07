@@ -3,20 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import Leaderboard from './Leaderboard';
 import ChatComponent from './ChatComponent';
 import HintDisplay from './HintDisplay';
 import { formatCategory, formatDifficulty } from '../utils/categoryFormatter';
 import './GameRoom.css';
+import { clearUsername } from '../store/usernameSlice';
+
 
 interface GameRoomProps {
   playerName: string;
   onLeaveGame: () => void;
-  onGoToAbout: () => void;
 }
 
-export default function GameRoom({ playerName, onLeaveGame, onGoToAbout }: GameRoomProps) {
+export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    const handleUnload = () => dispatch(clearUsername());
+    window.addEventListener("beforeunload", handleUnload);
+    return () => window.removeEventListener("beforeunload", handleUnload);
+  }, [dispatch]);
   const navigate = useNavigate();
   const { sessionId } = useAppSelector((state) => state.username);
   const [showWelcome, setShowWelcome] = useState(true);
@@ -53,6 +60,7 @@ export default function GameRoom({ playerName, onLeaveGame, onGoToAbout }: GameR
 
   // Real-time leaderboard data
   const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate } = useLeaderboard();
+  
   
   // Function to handle score updates
   const handleScoreUpdate = (scoreData: any) => {
@@ -322,13 +330,6 @@ export default function GameRoom({ playerName, onLeaveGame, onGoToAbout }: GameR
             <span className="player-welcome">Welcome, {playerName}!</span>
           </div>
           <div className="header-right">
-            <button
-              className="about-button secondary"
-              onClick={onGoToAbout}
-              title="About Trivvia"
-            >
-              About
-            </button>
             <button
               className={`mobile-menu-button ${isHeaderExpanded ? 'expanded' : ''}`}
               onClick={() => setIsHeaderExpanded(!isHeaderExpanded)}

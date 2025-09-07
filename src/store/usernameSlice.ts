@@ -50,6 +50,11 @@ const usernameSlice = createSlice({
       state.currentUsername = action.payload;
       state.error = null;
     },
+    clearUsername: (state) => {
+      state.currentUsername = '';
+      state.sessionId = '';
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -71,5 +76,5 @@ const usernameSlice = createSlice({
   },
 });
 
-export const {setUsername } = usernameSlice.actions;
+export const { setUsername, clearUsername } = usernameSlice.actions;
 export default usernameSlice.reducer;

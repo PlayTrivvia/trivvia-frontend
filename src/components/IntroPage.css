@@ -1,10 +1,11 @@
 .intro-page {
-  height: 100vh;
+  min-height: 100vh;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
+  padding-top: 80px; /* Account for fixed navbar */
   overflow: hidden;
 }
 
@@ -226,6 +227,7 @@
 @media (max-width: 640px) {
   .intro-page {
     padding: 0;
+    padding-top: 76px; /* Account for fixed navbar on mobile */
     background: var(--color-background);
   }
   

@@ -1,13 +1,13 @@
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { generateUsername } from '../store/usernameSlice'
+import NavigationBar from './NavigationBar'
 import './IntroPage.css'
 
 interface IntroPageProps {
   onJoinGame: () => void;
-  onGoToAbout: () => void;
 }
 
-function IntroPage({ onJoinGame, onGoToAbout }: IntroPageProps) {
+function IntroPage({ onJoinGame }: IntroPageProps) {
   const dispatch = useAppDispatch();
   const { isLoading } = useAppSelector((state) => state.username);
 
@@ -22,6 +22,7 @@ function IntroPage({ onJoinGame, onGoToAbout }: IntroPageProps) {
 
   return (
     <div className="intro-page">
+      <NavigationBar currentPage="home" />
       <div className="intro-container">
         <header className="intro-header">
           <div className="logo-container">
@@ -63,12 +64,6 @@ function IntroPage({ onJoinGame, onGoToAbout }: IntroPageProps) {
           <p className="intro-note">
             Ready to challenge your mind? Join now and start playing!
           </p>
-          <button 
-            onClick={onGoToAbout}
-            className="about-link-button"
-          >
-            About Trivvia
-          </button>
         </footer>
       </div>
     </div>

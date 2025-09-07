@@ -4,13 +4,28 @@ import GameRoom from './components/GameRoom'
 import AboutPage from './components/AboutPage'
 
 import { useUserStatus } from './hooks/useHeartbeat'
-import { useAppSelector } from './store/hooks'
+import { useAppSelector, useAppDispatch } from './store/hooks'
+import { clearUsername } from './store/usernameSlice'
 import './App.css'
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react'
 
 // Wrapper component to handle navigation and state management
 function AppContent() {
   const navigate = useNavigate();
   const { currentUsername } = useAppSelector((state) => state.username);
+  const dispatch = useAppDispatch();
+  const location = useLocation();
+
+  useEffect(() => {
+    // When leaving /game, clear username
+    return () => {
+      if (location.pathname === '/game') {
+        dispatch(clearUsername());
+      }
+    };
+  }, [location.pathname, dispatch]);
+  
   
   // Start user status monitoring when user is in game
   useUserStatus();
@@ -20,16 +35,7 @@ function AppContent() {
   }
 
   const handleLeaveGame = async () => {
-    // No need to manually release username - WebSocket handles this automatically
-    // Just navigate away
-    navigate(-1);
-  }
-
-  const handleGoToAbout = () => {
-    navigate('/about');
-  }
-
-  const handleBackFromAbout = () => {
+    dispatch(clearUsername());
     navigate('/');
   }
 
@@ -40,14 +46,9 @@ function AppContent() {
           path="/" 
           element={
             <IntroPage 
-              onJoinGame={handleJoinGame} 
-              onGoToAbout={handleGoToAbout}
+              onJoinGame={handleJoinGame}
             /> 
           } 
-        />
-        <Route 
-          path="/intro" 
-          element={<Navigate to="/" replace />} 
         />
         <Route 
           path="/game" 
@@ -56,7 +57,6 @@ function AppContent() {
               <GameRoom 
                 playerName={currentUsername} 
                 onLeaveGame={handleLeaveGame}
-                onGoToAbout={handleGoToAbout}
               />
             ) : (
               <Navigate to="/" replace />
@@ -65,7 +65,7 @@ function AppContent() {
         />
         <Route 
           path="/about" 
-          element={<AboutPage onBack={handleBackFromAbout} />} 
+          element={<AboutPage />} 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
