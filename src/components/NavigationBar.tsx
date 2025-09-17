@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import './NavigationBar.css';
 
 interface NavigationBarProps {
@@ -7,7 +7,6 @@ interface NavigationBarProps {
 
 function NavigationBar({ currentPage }: NavigationBarProps) {
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleHomeClick = () => {
     navigate('/');
