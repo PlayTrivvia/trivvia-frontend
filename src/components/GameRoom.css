@@ -3,9 +3,24 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background-image: url('/trivvia_background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   opacity: 1;
-  transition: opacity 0.3s ease-out;
+  position: relative;
+}
+
+.welcome-screen::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(248, 249, 250, 0.9) 0%, rgba(233, 236, 239, 0.9) 100%);
+  z-index: 1;
 }
 
 .welcome-screen.fade-out {
@@ -41,7 +56,13 @@
   text-align: center;
   max-width: 500px;
   padding: var(--spacing-xl);
-  animation: contentEntrance 0.8s ease-out;
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 @keyframes contentEntrance {

@@ -1,18 +1,36 @@
 .intro-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background-image: url('/trivvia_background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
   padding-top: 80px; /* Account for fixed navbar */
   overflow: hidden;
+  position: relative;
+}
+
+.intro-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(248, 249, 250, 0.7) 0%, rgba(233, 236, 239, 0.7) 100%);
+  z-index: 1;
 }
 
 .intro-container {
+  position: relative;
+  z-index: 2;
   max-width: 600px;
   width: 100%;
-  background: var(--color-background);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 12px;
   box-shadow: 
     0 4px 6px -1px rgba(0, 0, 0, 0.1),
@@ -228,13 +246,15 @@
   .intro-page {
     padding: 0;
     padding-top: 76px; /* Account for fixed navbar on mobile */
-    background: var(--color-background);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    overflow: hidden;
+    height: 100vh;
   }
   
   .intro-container {
     max-width: none;
     width: 100%;
-    background: var(--color-background);
+    background: rgba(255, 255, 255, 0.95);
     border-radius: 0;
     box-shadow: none;
     padding: var(--spacing-lg);

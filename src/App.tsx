@@ -67,6 +67,15 @@ function AppContent() {
           path="/about" 
           element={<AboutPage />} 
         />
+        <Route 
+          path="/loading" 
+          element={
+            <GameRoom 
+              playerName="TestUser" 
+              onLeaveGame={() => navigate('/')}
+            />
+          } 
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
