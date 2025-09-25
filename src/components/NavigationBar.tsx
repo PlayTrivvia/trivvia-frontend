@@ -2,7 +2,7 @@ import { useNavigate} from 'react-router-dom';
 import './NavigationBar.css';
 
 interface NavigationBarProps {
-  currentPage: 'home' | 'about';
+  currentPage: 'home' | 'rooms' | 'about';
 }
 
 function NavigationBar({ currentPage }: NavigationBarProps) {
@@ -10,6 +10,10 @@ function NavigationBar({ currentPage }: NavigationBarProps) {
 
   const handleHomeClick = () => {
     navigate('/');
+  };
+
+  const handleRoomsClick = () => {
+    navigate('/rooms');
   };
 
   const handleAboutClick = () => {
@@ -29,6 +33,12 @@ function NavigationBar({ currentPage }: NavigationBarProps) {
             onClick={handleHomeClick}
           >
             Home
+          </button>
+          <button
+            className={`nav-link ${currentPage === 'rooms' ? 'active' : ''}`}
+            onClick={handleRoomsClick}
+          >
+            Categories
           </button>
           <button
             className={`nav-link ${currentPage === 'about' ? 'active' : ''}`}

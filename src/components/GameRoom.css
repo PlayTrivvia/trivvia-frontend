@@ -3,24 +3,13 @@
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url('/trivvia_background.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: #fafafa;
   opacity: 1;
   position: relative;
 }
 
 .welcome-screen::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(248, 249, 250, 0.9) 0%, rgba(233, 236, 239, 0.9) 100%);
-  z-index: 1;
+  display: none;
 }
 
 .welcome-screen.fade-out {
@@ -54,15 +43,35 @@
 
 .welcome-content {
   text-align: center;
-  max-width: 500px;
-  padding: var(--spacing-xl);
+  max-width: 600px;
+  padding: var(--spacing-2xl);
   position: relative;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 12px;
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  background: transparent;
+  color: #000000;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: 0;
+  font-weight: 600;
+  font-size: var(--text-lg);
+  margin: var(--spacing-lg) 0;
+  border: none;
+}
+
+.category-icon {
+  font-size: var(--text-xl);
+}
+
+.category-name {
+  font-size: var(--text-base);
 }
 
 @keyframes contentEntrance {
@@ -79,20 +88,20 @@
 .welcome-title {
   font-size: var(--text-4xl);
   font-weight: 700;
-  color: var(--color-primary);
+  color: #000000;
   margin-bottom: var(--spacing-lg);
   letter-spacing: -0.02em;
 }
 
 .welcome-subtitle {
   font-size: var(--text-lg);
-  color: var(--color-text-secondary);
+  color: #000000;
   margin-bottom: var(--spacing-md);
 }
 
 .nickname-display {
-  background: var(--color-accent);
-  color: white;
+  background: var(--category-color, #f8b4d0);
+  color: #000000;
   padding: var(--spacing-lg) var(--spacing-xl);
   border-radius: 12px;
   font-size: var(--text-2xl);
@@ -100,11 +109,12 @@
   margin: var(--spacing-lg) 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   letter-spacing: 0.5px;
+  border: none;
 }
 
 .welcome-message {
   font-size: var(--text-base);
-  color: var(--color-text-secondary);
+  color: #000000;
   font-style: italic;
   margin-top: var(--spacing-lg);
   animation: pulse 2s ease-in-out infinite;
@@ -126,7 +136,7 @@
 
 .loading-dots {
   font-size: var(--text-base);
-  color: var(--color-text-secondary);
+  color: #000000;
   font-style: italic;
   position: relative;
 }
@@ -740,5 +750,122 @@
 /* Hide mobile menu button on desktop */
 .mobile-menu-button {
   display: none;
+}
+
+/* Coming Soon Section Styles */
+.coming-soon-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: var(--spacing-xl);
+}
+
+.coming-soon-content {
+  text-align: center;
+  max-width: 600px;
+  padding: var(--spacing-2xl);
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.coming-soon-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-lg);
+  display: block;
+  filter: drop-shadow(0 4px 8px rgba(var(--category-color), 0.3));
+}
+
+.coming-soon-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-lg);
+  letter-spacing: -0.02em;
+}
+
+.coming-soon-message {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.coming-soon-actions {
+  display: flex;
+  gap: var(--spacing-lg);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.back-to-rooms-button,
+.play-general-button {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  min-width: 180px;
+}
+
+.back-to-rooms-button {
+  background: transparent;
+  color: var(--color-text-secondary);
+  border: 2px solid var(--color-border);
+}
+
+.back-to-rooms-button:hover {
+  background: var(--color-background);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.play-general-button {
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.play-general-button:hover {
+  background: var(--color-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile responsive for coming soon section */
+@media (max-width: 768px) {
+  .coming-soon-content {
+    padding: var(--spacing-xl);
+    margin: var(--spacing-md);
+  }
+
+  .coming-soon-icon {
+    font-size: 3rem;
+  }
+
+  .coming-soon-title {
+    font-size: 2rem;
+  }
+
+  .coming-soon-message {
+    font-size: var(--text-base);
+  }
+
+  .coming-soon-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .back-to-rooms-button,
+  .play-general-button {
+    width: 100%;
+    max-width: 300px;
+  }
 }
 

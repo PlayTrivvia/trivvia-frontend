@@ -1,0 +1,575 @@
+.rooms-page {
+  min-height: 100vh;
+  background: #fafafa;
+  padding: var(--spacing-xl);
+  padding-top: 100px; /* Account for fixed navbar */
+}
+
+.rooms-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.rooms-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.rooms-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -0.02em;
+}
+
+.rooms-subtitle {
+  font-size: var(--text-xl);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+  margin: 0;
+}
+
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.room-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+  height: 300px;
+}
+
+.room-card .room-bottom-section {
+  background: white !important;
+}
+
+.room-top-section[data-category="general"] {
+  background: #f8b4d0; /* Light pink */
+}
+
+.room-top-section[data-category="science"] {
+  background: #fb9b00; /* Orange */
+}
+
+.room-top-section[data-category="math"] {
+  background: #f7da21; /* Bright yellow */
+}
+
+.room-top-section[data-category="pop-culture"] {
+  background: #fc716b; /* Coral red */
+}
+
+.room-top-section[data-category="history"] {
+  background: #d4a574; /* Brownish */
+}
+
+.room-top-section[data-category="sports"] {
+  background: #a8d8da; /* Light teal */
+}
+
+.room-top-section[data-category="geography"] {
+  background: #bfdbfe; /* Light blue */
+}
+
+.room-top-section[data-category="literature"] {
+  background: #c7a8d8; /* Lavender */
+}
+
+.room-card::before {
+  display: none;
+}
+
+.room-card:hover::before {
+  display: none;
+}
+
+.room-card.active {
+  border-color: transparent;
+}
+
+.room-card.active:hover {
+  transform: none;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.room-card.coming-soon {
+  cursor: not-allowed;
+}
+
+.room-card.coming-soon .room-top-section[data-category="science"] {
+  background: #fb9b00; /* Orange */
+}
+
+.room-card.coming-soon .room-top-section[data-category="math"] {
+  background: #f7da21; /* Bright yellow */
+}
+
+.room-card.coming-soon .room-top-section[data-category="pop-culture"] {
+  background: #fc716b; /* Coral red */
+}
+
+.room-card.coming-soon .room-top-section[data-category="history"] {
+  background: #d4a574; /* Brownish */
+}
+
+.room-card.coming-soon .room-top-section[data-category="sports"] {
+  background: #a8d8da; /* Light teal */
+}
+
+.room-card.coming-soon .room-top-section[data-category="geography"] {
+  background: #bfdbfe; /* Light blue */
+}
+
+.room-card.coming-soon .room-top-section[data-category="literature"] {
+  background: #c7a8d8; /* Lavender */
+}
+
+.room-card.coming-soon .room-icon {
+  background: transparent;
+}
+
+.room-card.coming-soon .room-name {
+  color: #000000;
+}
+
+.room-card.coming-soon .room-description {
+  color: #000000;
+}
+
+.room-card.coming-soon:hover {
+  transform: none;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.room-icon {
+  font-size: 3rem;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 0;
+  flex-shrink: 0;
+  box-shadow: none;
+  margin: 0 auto;
+}
+
+.room-card.active .room-icon {
+  background: transparent;
+  box-shadow: none;
+}
+
+.room-top-section {
+  flex: 1;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  border-radius: 12px 12px 0 0;
+  min-height: 200px;
+}
+
+.room-card .room-bottom-section {
+  background: white !important;
+  padding: var(--spacing-lg);
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  min-height: 90px;
+}
+
+.room-bottom-section {
+  background: white !important;
+  padding: var(--spacing-lg);
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  min-height: 90px;
+}
+
+.room-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.room-name {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.3;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+}
+
+.room-card.active .room-name {
+  color: #000000;
+}
+
+.room-description {
+  font-size: var(--text-base);
+  color: #000000;
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.5;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+}
+
+.coming-soon-badge {
+  display: inline-block;
+  background: rgba(107, 114, 128, 0.8);
+  color: #ffffff;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+  margin-top: var(--spacing-sm);
+}
+
+.room-arrow {
+  display: none;
+}
+
+.room-button {
+  background: var(--color-primary);
+  color: var(--color-background);
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+  min-width: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.room-button:hover {
+  background: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.room-button:active {
+  transform: translateY(0);
+}
+
+.active-button {
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.coming-soon-button {
+  background: #6b7280;
+  color: #ffffff;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.coming-soon-button:hover {
+  background: #6b7280;
+  transform: none;
+  box-shadow: none;
+}
+
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .rooms-page {
+    padding: var(--spacing-lg);
+    padding-top: 80px;
+  }
+
+  .rooms-title {
+    font-size: 1.5rem;
+  }
+
+  .rooms-subtitle {
+    font-size: var(--text-base);
+    margin-bottom: 0.25rem;
+  }
+
+  .rooms-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+    max-width: 400px;
+    margin-top: -1rem;
+  }
+
+  .room-card {
+    height: 240px;
+  }
+  
+  .room-top-section {
+    padding: var(--spacing-md);
+    min-height: 150px;
+  }
+  
+  .room-bottom-section {
+    padding: var(--spacing-md);
+    min-height: 80px;
+  }
+
+  .room-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2.5rem;
+  }
+
+  .room-name {
+    font-size: var(--text-base);
+  }
+
+  .room-description {
+    font-size: var(--text-xs);
+  }
+
+}
+
+@media (max-width: 480px) {
+  .rooms-page {
+    padding: var(--spacing-md);
+    padding-top: 76px;
+  }
+
+  .rooms-title {
+    font-size: 1.25rem;
+  }
+
+  .rooms-subtitle {
+    font-size: var(--text-sm);
+    margin-bottom: 0.25rem;
+  }
+
+  .rooms-grid {
+    margin-top: -1.25rem;
+  }
+
+  .room-card {
+    height: 220px;
+  }
+  
+  .room-top-section {
+    padding: var(--spacing-sm);
+    min-height: 130px;
+  }
+  
+  .room-bottom-section {
+    padding: var(--spacing-sm);
+    min-height: 80px;
+  }
+
+  .room-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 2rem;
+  }
+  
+  .room-name {
+    font-size: var(--text-sm);
+  }
+
+  .room-description {
+    font-size: var(--text-xs);
+  }
+  
+  .room-button {
+    font-size: var(--text-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    min-width: 80px;
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-lg);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  padding: var(--spacing-xl);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.modal-title {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+}
+
+.modal-body {
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.modal-description {
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.5;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+}
+
+.coming-soon-message {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  border-left: 4px solid var(--color-accent);
+}
+
+.coming-soon-text {
+  display: block;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: var(--spacing-sm);
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+}
+
+.coming-soon-subtext {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.4;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+}
+
+.modal-footer {
+  padding: var(--spacing-xl);
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+}
+
+.modal-button {
+  background: var(--color-primary);
+  color: var(--color-background);
+  border: none;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--text-base);
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
+  min-width: 120px;
+}
+
+.modal-button:hover {
+  background: var(--color-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.modal-button:active {
+  transform: translateY(0);
+}
+
+/* Mobile Modal Styles */
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: var(--spacing-md);
+  }
+  
+  .modal-content {
+    max-width: none;
+    width: 100%;
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: var(--spacing-lg);
+  }
+  
+  .modal-icon {
+    font-size: 2.5rem;
+  }
+  
+  .modal-title {
+    font-size: var(--text-xl);
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .rooms-page {
+    background: #fafafa;
+  }
+}

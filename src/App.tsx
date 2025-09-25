@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import IntroPage from './components/IntroPage'
+import RoomsPage from './components/RoomsPage'
 import GameRoom from './components/GameRoom'
 import AboutPage from './components/AboutPage'
 
@@ -17,26 +18,29 @@ function AppContent() {
   const dispatch = useAppDispatch();
   const location = useLocation();
 
-  useEffect(() => {
-    // When leaving /game, clear username
-    return () => {
-      if (location.pathname === '/game') {
-        dispatch(clearUsername());
-      }
-    };
-  }, [location.pathname, dispatch]);
+  const clearUsernameAndNavigate = () => {
+    dispatch(clearUsername());
+    navigate('/rooms');
+  };
+
+  // Removed useEffect that was causing race condition with leave game navigation
   
   
   // Start user status monitoring when user is in game
   useUserStatus();
 
-  const handleJoinGame = () => {
+  const handleSelectCategory = () => {
+    navigate('/rooms');
+  }
+
+  const handleJoinRoom = async () => {
+    // This function is no longer used since username generation is handled in RoomsPage
+    // Keeping it for backward compatibility but it won't be called
     navigate('/game');
   }
 
   const handleLeaveGame = async () => {
-    dispatch(clearUsername());
-    navigate('/');
+    clearUsernameAndNavigate();
   }
 
   return (
@@ -46,7 +50,15 @@ function AppContent() {
           path="/" 
           element={
             <IntroPage 
-              onJoinGame={handleJoinGame}
+              onSelectCategory={handleSelectCategory}
+            /> 
+          } 
+        />
+        <Route 
+          path="/rooms" 
+          element={
+            <RoomsPage 
+              onJoinRoom={handleJoinRoom}
             /> 
           } 
         />
@@ -59,22 +71,13 @@ function AppContent() {
                 onLeaveGame={handleLeaveGame}
               />
             ) : (
-              <Navigate to="/" replace />
+              <Navigate to="/rooms" replace />
             )
           } 
         />
         <Route 
           path="/about" 
           element={<AboutPage />} 
-        />
-        <Route 
-          path="/loading" 
-          element={
-            <GameRoom 
-              playerName="TestUser" 
-              onLeaveGame={() => navigate('/')}
-            />
-          } 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

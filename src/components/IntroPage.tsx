@@ -1,24 +1,11 @@
-import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { generateUsername } from '../store/usernameSlice'
 import NavigationBar from './NavigationBar'
 import './IntroPage.css'
 
 interface IntroPageProps {
-  onJoinGame: () => void;
+  onSelectCategory: () => void;
 }
 
-function IntroPage({ onJoinGame }: IntroPageProps) {
-  const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector((state) => state.username);
-
-  const handleJoinGame = async () => {
-    try {
-      await dispatch(generateUsername()).unwrap();
-      onJoinGame();
-    } catch (error) {
-      
-    }
-  }
+function IntroPage({ onSelectCategory }: IntroPageProps) {
 
   return (
     <div className="intro-page">
@@ -51,11 +38,10 @@ function IntroPage({ onJoinGame }: IntroPageProps) {
 
           <div className="intro-form">
             <button
-              onClick={handleJoinGame}
-              className={`join-button ${isLoading ? 'loading' : ''}`}
-              disabled={isLoading}
+              onClick={onSelectCategory}
+              className="join-button"
             >
-              {isLoading ? 'Generating Username...' : 'Join Game'}
+              Choose Category
             </button>
           </div>
         </div>

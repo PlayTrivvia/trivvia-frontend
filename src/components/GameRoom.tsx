@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useLeaderboard } from '../hooks/useLeaderboard';
 
@@ -25,7 +25,31 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     return () => window.removeEventListener("beforeunload", handleUnload);
   }, [dispatch]);
   const navigate = useNavigate();
+  const location = useLocation();
   const { sessionId } = useAppSelector((state) => state.username);
+  
+  // Get category from URL parameters
+  const searchParams = new URLSearchParams(location.search);
+  const category = searchParams.get('category') || 'general';
+  
+  // Category display information
+  const getCategoryInfo = (categoryId: string) => {
+    const categories: { [key: string]: { name: string; icon: string; color: string } } = {
+      'general': { name: 'General Knowledge', icon: '🧠', color: '#f8b4d0' },
+      'science': { name: 'Science & Nature', icon: '🔬', color: '#fb9b00' },
+      'math': { name: 'Mathematics', icon: '🧮', color: '#f7da21' },
+      'pop-culture': { name: 'Pop Culture', icon: '🎬', color: '#fc716b' },
+      'history': { name: 'History', icon: '🏛️', color: '#d4a574' },
+      'sports': { name: 'Sports', icon: '⚽', color: '#a8d8da' },
+      'geography': { name: 'Geography', icon: '🌍', color: '#bfdbfe' },
+      'literature': { name: 'Literature', icon: '📚', color: '#c7a8d8' }
+    };
+    return categories[categoryId] || categories['general'];
+  };
+  
+  const categoryInfo = getCategoryInfo(category);
+  const isGeneralCategory = category === 'general';
+  
   const [showWelcome, setShowWelcome] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -184,7 +208,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
 
   // WebSocket connection
   const { isConnected, sendMessage } = useWebSocket(() => {
-    navigate('/');
+    navigate('/rooms');
   }, onLeaderboardUpdate, (chatData) => {
     
     // Handle trivia questions - this event comes immediately on login with current question
@@ -307,13 +331,19 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   if (showWelcome) {
     return (
       <div className="game-room">
-        <div className={`welcome-screen ${isTransitioning ? 'fade-out' : ''}`}>
+        <div className={`welcome-screen ${isTransitioning ? 'fade-out' : ''}`} style={{ '--category-color': categoryInfo.color } as React.CSSProperties}>
           <div className="welcome-content">
             <h1 className="welcome-title">Welcome to Trivvia!</h1>
+            <div className="category-badge" style={{ '--category-color': categoryInfo.color } as React.CSSProperties}>
+              <span className="category-icon">{categoryInfo.icon}</span>
+              <span className="category-name">{categoryInfo.name}</span>
+            </div>
             <p className="welcome-subtitle">Your nickname is:</p>
             <div className="nickname-display">{playerName}</div>
             <div className="welcome-loading">
-              <span className="loading-dots">Preparing your game</span>
+              <span className="loading-dots">
+                {isGeneralCategory ? 'Preparing your game' : 'This category is coming soon!'}
+              </span>
             </div>
           </div>
         </div>
@@ -368,31 +398,59 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
         </aside>
 
         <main className="game-main">
-          <div className="unified-chat-section">
-            <div className="question-header">
-              <span className="question-category">{currentQuestion?.category ? formatCategory(currentQuestion.category) : 'Loading...'}</span>
-              <span className="question-difficulty">{currentQuestion?.difficulty ? formatDifficulty(currentQuestion.difficulty) : 'Loading...'}</span>
-            </div>
+          {isGeneralCategory ? (
+            <div className="unified-chat-section">
+              <div className="question-header">
+                <span className="question-category">{currentQuestion?.category ? formatCategory(currentQuestion.category) : 'Loading...'}</span>
+                <span className="question-difficulty">{currentQuestion?.difficulty ? formatDifficulty(currentQuestion.difficulty) : 'Loading...'}</span>
+              </div>
 
-            <div className="question-content">
-              <h2 className="question-text">{currentQuestion?.question || 'Loading trivia question...'}</h2>
-              
-              {/* Display hint below the question */}
-              {currentHint && (
-                <HintDisplay 
-                  hint={currentHint.hint}
-                  done={currentHint.done}
-                />
-              )}
-            </div>
+              <div className="question-content">
+                <h2 className="question-text">{currentQuestion?.question || 'Loading trivia question...'}</h2>
+                
+                {/* Display hint below the question */}
+                {currentHint && (
+                  <HintDisplay 
+                    hint={currentHint.hint}
+                    done={currentHint.done}
+                  />
+                )}
+              </div>
 
-            <ChatComponent
-              messages={messages}
-              onSendMessage={handleSendMessage}
-              currentPlayer={playerName}
-              isLoadingHistory={isLoadingChatHistory}
-            />
-          </div>
+              <ChatComponent
+                messages={messages}
+                onSendMessage={handleSendMessage}
+                currentPlayer={playerName}
+                isLoadingHistory={isLoadingChatHistory}
+              />
+            </div>
+          ) : (
+            <div className="coming-soon-section">
+              <div className="coming-soon-content">
+                <div className="coming-soon-icon" style={{ '--category-color': categoryInfo.color } as React.CSSProperties}>
+                  {categoryInfo.icon}
+                </div>
+                <h2 className="coming-soon-title">{categoryInfo.name}</h2>
+                <p className="coming-soon-message">
+                  This category is coming soon! We're working hard to bring you specialized trivia questions for {categoryInfo.name.toLowerCase()}.
+                </p>
+                <div className="coming-soon-actions">
+                  <button 
+                    className="back-to-rooms-button"
+                    onClick={() => navigate('/rooms')}
+                  >
+                    ← Back to Categories
+                  </button>
+                  <button 
+                    className="play-general-button"
+                    onClick={() => navigate('/rooms')}
+                  >
+                    Back to Categories
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </div>
