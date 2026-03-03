@@ -69,27 +69,27 @@ function PremiumPage() {
             
             <ul className="feature-list">
               <li className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="plan-check-icon">✓</span>
                 Play unlimited trivia games
               </li>
               <li className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="plan-check-icon">✓</span>
                 Real-time multiplayer
               </li>
               <li className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="plan-check-icon">✓</span>
                 Live chat with players
               </li>
               <li className="feature-item">
-                <span className="feature-icon">✓</span>
+                <span className="plan-check-icon">✓</span>
                 Track your streak
               </li>
               <li className="feature-item disabled">
-                <span className="feature-icon">✗</span>
+                <span className="plan-check-icon">✗</span>
                 No custom themes
               </li>
               <li className="feature-item disabled">
-                <span className="feature-icon">✗</span>
+                <span className="plan-check-icon">✗</span>
                 No priority support
               </li>
             </ul>
@@ -112,27 +112,27 @@ function PremiumPage() {
             
             <ul className="feature-list">
               <li className="feature-item">
-                <span className="feature-icon premium-icon">✓</span>
+                <span className="plan-check-icon premium-icon">✓</span>
                 Everything in Free
               </li>
               <li className="feature-item">
-                <span className="feature-icon premium-icon">✓</span>
+                <span className="plan-check-icon premium-icon">✓</span>
                 Custom doodly themes
               </li>
               <li className="feature-item">
-                <span className="feature-icon premium-icon">✓</span>
+                <span className="plan-check-icon premium-icon">✓</span>
                 Premium badge in games
               </li>
               <li className="feature-item">
-                <span className="feature-icon premium-icon">✓</span>
+                <span className="plan-check-icon premium-icon">✓</span>
                 Priority support
               </li>
               <li className="feature-item">
-                <span className="feature-icon premium-icon">✓</span>
+                <span className="plan-check-icon premium-icon">✓</span>
                 Ad-free experience
               </li>
               <li className="feature-item">
-                <span className="feature-icon premium-icon">✓</span>
+                <span className="plan-check-icon premium-icon">✓</span>
                 Support indie development
               </li>
             </ul>

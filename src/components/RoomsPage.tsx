@@ -171,7 +171,7 @@ function RoomsPage({}: RoomsPageProps) {
         </div>
 
         <footer className="rooms-footer">
-          <p className="footer-text">© 2025 Trivvia. All rights reserved.</p>
+          <p className="footer-text">© 2026 Trivvia. All rights reserved.</p>
         </footer>
       </div>
 

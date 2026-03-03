@@ -110,8 +110,8 @@ function AboutPage({}: AboutPageProps) {
                   </svg>
                 </div>
                 <div className="feature-content">
-                  <h3>Real-time Engine</h3>
-                  <p>Powered by WebSockets so players see updates instantly.</p>
+                  <h3>Real-time Scoring</h3>
+                  <p>Quick questions. Instant scoring. No waiting around.</p>
                 </div>
               </div>
               

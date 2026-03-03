@@ -70,7 +70,7 @@ function IntroPage({ onSelectCategory }: IntroPageProps) {
             </div>
             <div className="feature-card-content">
               <h3 className="card-title">Jump in as a guest</h3>
-              <p className="card-text">Everyone can play instantly—no sign-up required.</p>
+              <p className="card-text">Everyone can play instantly, no sign-up required.</p>
             </div>
           </div>
           <div className="feature-card animate-fade-in-view-delay-2">
@@ -107,7 +107,7 @@ function IntroPage({ onSelectCategory }: IntroPageProps) {
 
       {/* Footer */}
       <footer className="intro-footer">
-        <p className="footer-text">© 2025 Trivvia. All rights reserved.</p>
+        <p className="footer-text">© 2026 Trivvia. All rights reserved.</p>
       </footer>
     </div>
   )

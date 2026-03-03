@@ -176,7 +176,7 @@
   text-decoration: line-through;
 }
 
-.feature-icon {
+.plan-check-icon {
   flex-shrink: 0;
   width: 24px;
   height: 24px;
@@ -190,7 +190,7 @@
   font-size: 0.875rem;
 }
 
-.feature-item.disabled .feature-icon {
+.feature-item.disabled .plan-check-icon {
   background: #cbd5e1;
   color: #64748b;
 }
