@@ -169,7 +169,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
         if (data.question && data.category && data.difficulty) {
           setCurrentQuestion({
             id: 'current_' + Date.now(),
-            question: decodeHtmlEntities(data.question),
+            question: toSentenceCase(decodeHtmlEntities(data.question)),
             category: decodeHtmlEntities(data.category),
             difficulty: decodeHtmlEntities(data.difficulty),
           });
@@ -218,7 +218,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
       
       setCurrentQuestion({
         id: chatData.type + '_' + Date.now(), // Generate unique ID since backend doesn't provide one
-        question: decodeHtmlEntities(chatData.question),
+        question: toSentenceCase(decodeHtmlEntities(chatData.question)),
         category: decodeHtmlEntities(chatData.category),
         difficulty: decodeHtmlEntities(chatData.difficulty),
       });
@@ -294,7 +294,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
         
         // Welcome message and trivia question will be sent by backend via websocket
       }, 300);
-    }, 1500);
+    }, 4000);
     return () => clearTimeout(timer);
       }, [playerName]);
 
@@ -304,6 +304,12 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     const textarea = document.createElement('textarea');
     textarea.innerHTML = text;
     return textarea.value;
+  };
+
+  // Helper function to convert text to sentence case
+  const toSentenceCase = (text: string) => {
+    if (!text) return text;
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
 
@@ -339,7 +345,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
               <span className="category-name">{categoryInfo.name}</span>
             </div>
             <p className="welcome-subtitle">Your nickname is:</p>
-            <div className="nickname-display">{playerName}</div>
+            <div className="nickname-display">{playerName.toLowerCase()}</div>
             <div className="welcome-loading">
               <span className="loading-dots">
                 {isGeneralCategory ? 'Preparing your game' : 'This category is coming soon!'}
@@ -356,8 +362,13 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
       <header className={`game-header ${isHeaderExpanded ? 'expanded' : ''}`}>
         <div className="header-main">
           <div className="header-left">
-            <h1 className="game-title">Trivvia</h1>
-            <span className="player-welcome">Welcome, {playerName}!</span>
+            <div className="game-brand">
+              <div className="logo-circle">
+                <span className="logo-text">T</span>
+              </div>
+              <h1 className="game-title">Trivvia</h1>
+            </div>
+            <span className="player-welcome">Welcome, {playerName.toLowerCase()}!</span>
           </div>
           <div className="header-right">
             <button

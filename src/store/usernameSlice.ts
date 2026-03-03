@@ -15,7 +15,7 @@ const initialState: UsernameState = {
   error: null,
 };
 
-// Async thunk for generating username
+// Async thunk for generating username (guest users)
 export const generateUsername = createAsyncThunk(
   'username/generate',
   async (_, { rejectWithValue }) => {
@@ -42,6 +42,32 @@ export const generateUsername = createAsyncThunk(
   }
 );
 
+// Async thunk for creating session with existing username (logged-in users)
+export const createSessionWithUsername = createAsyncThunk(
+  'username/createSession',
+  async (username: string, { rejectWithValue }) => {
+    try {
+      // Generate a unique session ID
+      const session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+      const response = await fetch(`${apiBase}/create_session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ session_id, username }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return { username, session_id }; 
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to create session');
+    }
+  }
+);
+
 const usernameSlice = createSlice({
   name: 'username',
   initialState,
@@ -58,7 +84,7 @@ const usernameSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Generate username
+      // Generate username (guest)
       .addCase(generateUsername.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -70,6 +96,21 @@ const usernameSlice = createSlice({
         state.error = null;
       })
       .addCase(generateUsername.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      })
+      // Create session with username (logged-in)
+      .addCase(createSessionWithUsername.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(createSessionWithUsername.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentUsername = action.payload.username;
+        state.sessionId = action.payload.session_id;
+        state.error = null;
+      })
+      .addCase(createSessionWithUsername.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });

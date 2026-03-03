@@ -94,7 +94,22 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatCompon
               }`}
             >
               <div className="message-header">
-                <span className="message-player">{message.player}</span>
+                <span className="message-player">
+                  {message.type === 'bot' && (
+                    <span className="bot-prefix">
+                      <span className="bot-icon">🤖</span>
+                    </span>
+                  )}
+                  {message.type !== 'bot' && (
+                    <span className={`player-icon ${message.isOwnMessage ? 'own-player-icon' : ''}`}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 8C9.65685 8 11 6.65685 11 5C11 3.34315 9.65685 2 8 2C6.34315 2 5 3.34315 5 5C5 6.65685 6.34315 8 8 8Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <path d="M3 14C3 11.7909 5.23858 10 8 10C10.7614 10 13 11.7909 13 14" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </span>
+                  )}
+                  {message.type === 'bot' ? 'Trivvia Bot' : message.player.toLowerCase()}
+                </span>
                 <span className="message-timestamp">
                   {formatTimestamp(message.timestamp)}
                 </span>
@@ -102,9 +117,6 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatCompon
               <div className="message-content">
                 {message.type === 'answer' && (
                   <span className="answer-prefix">💡 </span>
-                )}
-                {message.type === 'bot' && (
-                  <span className="bot-prefix">🤖 </span>
                 )}
                 {message.type === 'bot' ? (
                   <span

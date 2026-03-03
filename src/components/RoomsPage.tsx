@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../store/hooks';
-import { generateUsername } from '../store/usernameSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { generateUsername, createSessionWithUsername } from '../store/usernameSlice';
 import NavigationBar from './NavigationBar';
 import './RoomsPage.css';
 
@@ -97,17 +97,23 @@ interface RoomsPageProps {
 function RoomsPage({}: RoomsPageProps) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const auth = useAppSelector((state) => state.auth);
+  const isLoggedIn = !!auth.token && !!auth.username;
   const [showComingSoonModal, setShowComingSoonModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   const handleButtonClick = async (room: Room) => {
     if (room.isActive) {
-      // Generate username and navigate to game
+      // If logged in, create session with their username; otherwise generate random one
       try {
-        await dispatch(generateUsername()).unwrap();
+        if (isLoggedIn && auth.username) {
+          await dispatch(createSessionWithUsername(auth.username)).unwrap();
+        } else {
+          await dispatch(generateUsername()).unwrap();
+        }
         navigate('/game');
       } catch (error) {
-        console.error('Failed to generate username:', error);
+        console.error('Failed to create session:', error);
       }
     } else {
       setSelectedRoom(room);
@@ -125,15 +131,15 @@ function RoomsPage({}: RoomsPageProps) {
       <NavigationBar currentPage="rooms" />
       <div className="rooms-container">
         <header className="rooms-header">
-          <h1 className="rooms-title">Choose Your Challenge</h1>
-          <p className="rooms-subtitle">Select a category and test your knowledge</p>
+          <h1 className="rooms-title animate-fade-in">Choose Your Challenge</h1>
+          <p className="rooms-subtitle animate-fade-in-delay-1">Select a category and test your knowledge</p>
         </header>
 
         <div className="rooms-grid">
-          {rooms.map((room) => (
+          {rooms.map((room, index) => (
             <div
               key={room.id}
-              className={`room-card ${room.isActive ? 'active' : 'coming-soon'}`}
+              className={`room-card ${room.isActive ? 'active' : 'coming-soon'} animate-fade-in-view-delay-${Math.min(index + 1, 3)}`}
               style={{ '--room-color': room.color } as React.CSSProperties}
             >
               <div className="room-top-section" data-category={room.id}>
@@ -164,6 +170,9 @@ function RoomsPage({}: RoomsPageProps) {
           ))}
         </div>
 
+        <footer className="rooms-footer">
+          <p className="footer-text">© 2025 Trivvia. All rights reserved.</p>
+        </footer>
       </div>
 
       {/* Coming Soon Modal */}

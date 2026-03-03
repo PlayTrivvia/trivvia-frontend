@@ -3,6 +3,10 @@ import IntroPage from './components/IntroPage'
 import RoomsPage from './components/RoomsPage'
 import GameRoom from './components/GameRoom'
 import AboutPage from './components/AboutPage'
+import LoginPage from './components/LoginPage'
+import SignupPage from './components/SignupPage'
+import AccountPage from './components/AccountPage'
+import PremiumPage from './components/PremiumPage'
 
 import { useUserStatus } from './hooks/useHeartbeat'
 import { useAppSelector, useAppDispatch } from './store/hooks'
@@ -78,6 +82,22 @@ function AppContent() {
         <Route 
           path="/about" 
           element={<AboutPage />} 
+        />
+        <Route 
+          path="/login" 
+          element={<LoginPage />} 
+        />
+        <Route 
+          path="/signup" 
+          element={<SignupPage />} 
+        />
+        <Route 
+          path="/account" 
+          element={<AccountPage />} 
+        />
+        <Route 
+          path="/premium" 
+          element={<PremiumPage />} 
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -1,35 +1,107 @@
 .navigation-bar {
-  background: var(--color-background);
-  border-bottom: 1px solid var(--color-border);
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: #faf8f3;
+  border: none;
+  position: relative;
+  z-index: 1;
+  box-shadow: none;
 }
 
 .nav-container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-md) var(--spacing-lg);
-  height: 60px;
+  padding: var(--spacing-md) var(--spacing-xl);
+  height: auto;
+  min-height: 60px;
 }
 
 .nav-brand {
   display: flex;
   align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.nav-brand:hover {
+  transform: scale(1.02);
+}
+
+.logo-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px 24px 18px 22px / 22px 20px 24px 18px;
+  background: #FF5E41;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: var(--text-xl);
+  flex-shrink: 0;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-2deg);
+  position: relative;
+  overflow: visible;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* Wobbly border effect - outer layer */
+.logo-circle::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 22px 26px 20px 24px / 24px 22px 26px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.5deg) translate(1px, 1px);
+}
+
+/* Wobbly border effect - inner accent */
+.logo-circle::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid #000;
+  border-radius: 18px 22px 16px 20px / 20px 18px 22px 16px;
+  z-index: -1;
+  opacity: 0.3;
+  transform: rotate(-1.8deg) translate(-1px, -1px);
+}
+
+.logo-text {
+  transform: rotate(2deg);
+  display: block;
+  color: #000;
+}
+
+.nav-brand:hover .logo-circle {
+  transform: translateY(-2px) rotate(-1deg) scale(1.05);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.nav-brand:hover .logo-text {
+  transform: rotate(3deg);
 }
 
 .brand-text {
-  font-size: var(--text-2xl);
-  font-weight: 700;
-  color: var(--color-primary);
-  font-family: 'NYTimes', Georgia, 'Times New Roman', serif;
-  letter-spacing: -0.025em;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  letter-spacing: -0.02em;
+  transform: rotate(0.5deg);
+  transition: transform 0.2s ease;
+}
+
+.nav-brand:hover .brand-text {
+  transform: rotate(-0.3deg) scale(1.02);
 }
 
 .nav-links {
@@ -41,7 +113,7 @@
 .nav-link {
   background: none;
   border: none;
-  color: var(--color-text-secondary);
+  color: #6b7280;
   font-size: var(--text-base);
   font-weight: 500;
   padding: var(--spacing-sm) var(--spacing-lg);
@@ -53,26 +125,126 @@
 }
 
 .nav-link:hover {
-  color: var(--color-text-primary);
-  background-color: var(--color-surface);
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .nav-link.active {
-  color: var(--color-primary);
-  background-color: transparent;
+  color: #000;
   font-weight: 600;
 }
 
-.nav-link.active::after {
+.nav-account-btn {
+  background: #FFD93D;
+  color: #000;
+  border: 4px solid #000;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  margin-left: var(--spacing-sm);
+  position: relative;
+  border-radius: 18px 22px 14px 20px / 20px 16px 22px 18px;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-1deg);
+  overflow: visible;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-account-btn::before {
   content: '';
   position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  height: 2px;
-  background-color: var(--color-primary);
-  border-radius: 1px;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 20px 24px 16px 22px / 22px 18px 24px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(1px, 1px);
+}
+
+.nav-account-btn::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid #000;
+  border-radius: 16px 20px 12px 18px / 18px 14px 20px 16px;
+  z-index: -1;
+  opacity: 0.3;
+  transform: rotate(-1.5deg) translate(-1px, -1px);
+}
+
+.nav-account-btn:hover {
+  background: #FFC700;
+  transform: translateY(-2px) rotate(-1deg);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.nav-account-btn.active {
+  background: #FFBF00;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.35);
+}
+
+.nav-account-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 3;
+}
+
+.nav-categories-btn {
+  background: #8b5cf6;
+  color: white;
+  border: 4px solid #000;
+  font-size: var(--text-base);
+  font-weight: 700;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  margin-left: var(--spacing-sm);
+  position: relative;
+  /* Very pronounced wobbly hand-drawn shape */
+  border-radius: 18px 22px 14px 20px / 20px 16px 22px 18px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-0.5deg);
+  overflow: visible;
+}
+
+/* Wobbly border effect - outer layer */
+.nav-categories-btn::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 20px 24px 16px 22px / 22px 18px 24px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(1px, 1px);
+}
+
+/* Wobbly border effect - inner accent */
+.nav-categories-btn::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid #000;
+  border-radius: 16px 20px 12px 18px / 18px 14px 20px 16px;
+  z-index: -1;
+  opacity: 0.3;
+  transform: rotate(-1.5deg) translate(-1px, -1px);
+}
+
+.nav-categories-btn:hover {
+  background: #7c3aed;
+  transform: translate(-2px, -2px) rotate(-0.5deg);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.nav-categories-btn.active {
+  background: #7c3aed;
 }
 
 /* Mobile Responsive */

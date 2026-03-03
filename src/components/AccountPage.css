@@ -1,0 +1,385 @@
+.account-page {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #faf8f3;
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.account-container {
+  width: 100%;
+  max-width: 700px;
+  padding: var(--spacing-xl);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.account-content {
+  width: 100%;
+}
+
+/* Premium Banner */
+.premium-banner {
+  width: 100%;
+  background: linear-gradient(135deg, #FFD93D 0%, #FFC700 100%);
+  border: 4px solid #000;
+  border-radius: 20px 24px 18px 22px / 22px 20px 24px 18px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-0.5deg);
+  position: relative;
+  overflow: visible;
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+}
+
+.premium-banner::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 22px 26px 20px 24px / 24px 22px 26px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(1px, 1px);
+}
+
+.premium-banner::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid #000;
+  border-radius: 18px 22px 16px 20px / 20px 18px 22px 16px;
+  z-index: -1;
+  opacity: 0.3;
+  transform: rotate(-1.5deg) translate(-1px, -1px);
+}
+
+.premium-banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.premium-badge-icon {
+  flex-shrink: 0;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: pulseRotate 2s ease-in-out infinite;
+}
+
+.premium-badge-icon svg {
+  width: 70px;
+  height: 70px;
+  fill: #FFD93D;
+  stroke: #000;
+  stroke-width: 1.8;
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.3));
+  transform: rotate(-8deg);
+  position: relative;
+}
+
+@keyframes pulseRotate {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
+.premium-banner-text {
+  flex: 1;
+  min-width: 200px;
+}
+
+.premium-banner-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.premium-banner-description {
+  font-size: 1rem;
+  color: #475569;
+  margin: 0;
+  font-weight: 500;
+}
+
+.premium-banner-button {
+  background: #FF5E41;
+  color: white;
+  border: 4px solid #000;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--text-base);
+  font-weight: 700;
+  border-radius: 16px 18px 14px 17px / 17px 15px 19px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: visible;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-0.5deg);
+  white-space: nowrap;
+}
+
+.premium-banner-button::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 3px solid #000;
+  border-radius: 18px 20px 16px 19px / 19px 17px 20px 18px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1deg) translate(1px, 1px);
+}
+
+.premium-banner-button:hover {
+  background: #ff4d2e;
+  transform: translate(-2px, -2px) rotate(-0.5deg);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+}
+
+.account-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+  letter-spacing: -0.025em;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  transform: rotate(-0.3deg);
+  line-height: 1.1;
+}
+
+.account-subtitle {
+  font-size: 1.125rem;
+  color: #475569;
+  margin-bottom: var(--spacing-2xl);
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  font-weight: 500;
+}
+
+.account-card {
+  width: 100%;
+  background: #ffffff;
+  border: 4px solid #000;
+  border-radius: 24px 28px 20px 26px / 26px 22px 28px 24px;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-0.3deg);
+  position: relative;
+  overflow: visible;
+  padding: var(--spacing-2xl);
+  box-sizing: border-box;
+}
+
+.account-card::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 4px solid #000;
+  border-radius: 26px 30px 22px 28px / 28px 24px 30px 26px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(2px, 2px);
+}
+
+.account-card::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border: 2px solid #000;
+  border-radius: 22px 26px 18px 24px / 24px 20px 26px 22px;
+  z-index: -1;
+  opacity: 0.3;
+  transform: rotate(-1.5deg) translate(-2px, -2px);
+}
+
+.account-section {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: var(--spacing-lg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: #475569;
+  font-size: var(--text-base);
+}
+
+.info-value {
+  font-weight: 500;
+  color: #0f172a;
+  font-size: var(--text-base);
+}
+
+.info-value.premium-status {
+  color: #FF5E41;
+  font-weight: 700;
+}
+
+.account-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--spacing-lg);
+  border-top: 2px solid #e2e8f0;
+}
+
+.logout-button {
+  background: #ef4444;
+  color: white;
+  border: 4px solid #000;
+  padding: var(--spacing-md) var(--spacing-2xl);
+  font-size: var(--text-base);
+  font-weight: 700;
+  border-radius: 18px 22px 14px 20px / 20px 16px 22px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: visible;
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-0.5deg);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+.logout-button::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 20px 24px 16px 22px / 22px 18px 24px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(1px, 1px);
+}
+
+.logout-button::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 2px solid #000;
+  border-radius: 16px 20px 12px 18px / 18px 14px 20px 16px;
+  z-index: -1;
+  opacity: 0.3;
+  transform: rotate(-1.5deg) translate(-1px, -1px);
+}
+
+.logout-button:hover {
+  background: #dc2626;
+  transform: translate(-2px, -2px) rotate(-0.5deg);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* Animations */
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: floatUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-delay-1 {
+  animation: floatUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-delay-2 {
+  animation: floatUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-fade-in-delay-3 {
+  animation: floatUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .account-container {
+    padding: var(--spacing-lg);
+  }
+
+  .account-card {
+    padding: var(--spacing-xl);
+  }
+
+  .account-title {
+    font-size: 2rem;
+  }
+
+  .account-subtitle {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .account-container {
+    padding: var(--spacing-md);
+  }
+
+  .account-card {
+    padding: var(--spacing-lg);
+  }
+
+  .account-title {
+    font-size: 1.875rem;
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .premium-banner-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .premium-banner-button {
+    width: 100%;
+  }
+}
+

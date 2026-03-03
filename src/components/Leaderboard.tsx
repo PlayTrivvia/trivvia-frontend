@@ -150,7 +150,13 @@ function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProp
             
             <div className="player-info">
               <div className="player-name-container">
-                <span className="player-name">{user.username}</span>
+                <span className="player-icon">
+                  <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8 8C9.65685 8 11 6.65685 11 5C11 3.34315 9.65685 2 8 2C6.34315 2 5 3.34315 5 5C5 6.65685 6.34315 8 8 8Z" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M3 14C3 11.7909 5.23858 10 8 10C10.7614 10 13 11.7909 13 14" stroke="#000" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
+                <span className="player-name">{user.username.toLowerCase()}</span>
                 <div className="player-status">
                   {user.username === currentPlayer && (
                     <span className="you-badge">You</span>
