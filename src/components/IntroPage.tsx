@@ -82,7 +82,7 @@ function IntroPage({ onSelectCategory }: IntroPageProps) {
             </div>
             <div className="feature-card-content">
               <h3 className="card-title">Answer questions</h3>
-              <p className="card-text">Questions pop in real-time. Tap fast, think faster.</p>
+              <p className="card-text">Questions pop in real-time. Type fast, think faster.</p>
             </div>
           </div>
           <div className="feature-card animate-fade-in-view-delay-3">
