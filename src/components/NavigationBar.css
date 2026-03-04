@@ -126,7 +126,6 @@
 
 .nav-link:hover {
   color: #000;
-  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .nav-link.active {

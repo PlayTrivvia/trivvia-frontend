@@ -6,7 +6,7 @@ export interface LeaderboardUser {
   session_id: string;
   joined_at?: number;
   last_seen_at?: number;
-  status: 'online' | 'away';
+  status: 'online' | 'away' | 'offline';
   best_streak: number;
 }
 
@@ -20,17 +20,16 @@ interface LeaderboardProps {
 function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProps) {
   // State to track which users are updating their scores
   const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
-  
+
   // State to track previous user positions for comparison
   const [prevUserPositions, setPrevUserPositions] = useState<Map<string, number>>(new Map());
-  
+
   // Ref to track if this is the first render
   const isFirstRender = useRef(true);
-  
-  // Filter out dropped users (they won't be in the users array anyway)
-  // Show only online and away users - offline users are removed from leaderboard
+
+  // Include all users: online, away, and offline (authenticated offline users persist on leaderboard)
   const activeUsers = useMemo(() => {
-    return users.filter(user => user.status === 'online' || user.status === 'away');
+    return users;
   }, [users]);
   
   // Sort users by best streak in descending order - memoized to prevent recreation
@@ -140,7 +139,7 @@ function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProp
             key={user.session_id}
             className={`player-item ${
               user.username === currentPlayer ? 'current-player' : ''
-            } ${user.status === 'away' ? 'away' : ''} ${
+            } ${user.status === 'away' ? 'away' : ''} ${user.status === 'offline' ? 'offline' : ''} ${
               updatingUsers.has(user.session_id) ? 'updating' : ''
             }`}
           >
@@ -161,7 +160,7 @@ function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProp
                   {user.username === currentPlayer && (
                     <span className="you-badge">You</span>
                   )}
-                  <span className={`status-indicator ${user.status === 'online' ? 'online' : 'away'}`}>
+                  <span className={`status-indicator ${user.status === 'online' ? 'online' : user.status === 'offline' ? 'offline' : 'away'}`}>
                     ●
                   </span>
                 </div>

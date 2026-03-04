@@ -5,7 +5,7 @@ export interface LeaderboardUser {
   session_id: string;
   joined_at?: number;
   last_seen_at?: number;
-  status: 'online' | 'away';
+  status: 'online' | 'away' | 'offline';
   best_streak: number;
 }
 
@@ -26,10 +26,9 @@ export const useLeaderboard = () => {
       
       // Ensure all users have proper status values and sort by best streak
       const usersWithStatus = data.users
-        .filter((user: any) => user.status !== 'offline') // Remove offline users completely
         .map((user: any) => ({
           ...user,
-          status: user.status === 'away' ? 'away' : 'online', // Map remaining statuses
+          status: user.status === 'away' ? 'away' : user.status === 'offline' ? 'offline' : 'online',
           joined_at: user.joined_at || 0,
           last_seen_at: user.last_seen_at || 0
         }))
@@ -74,8 +73,14 @@ export const useLeaderboard = () => {
           }
         });
       } else if (message.type === 'user_offline') {
-        // Remove user from the list when they go offline
-        setUsers(prevUsers => prevUsers.filter(u => u.session_id !== message.session_id));
+        // Mark authenticated user as offline — keep them on the leaderboard
+        setUsers(prevUsers =>
+          prevUsers.map(user =>
+            user.session_id === message.session_id
+              ? { ...user, status: 'offline' as const }
+              : user
+          )
+        );
       } else if (message.type === 'user_online') {
         // Update existing user status to online
         setUsers(prevUsers => {

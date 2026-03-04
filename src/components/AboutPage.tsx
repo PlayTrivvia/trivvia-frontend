@@ -159,7 +159,7 @@ function AboutPage({}: AboutPageProps) {
           <section className="about-section">
             <h2 className="animate-fade-in-view">Get in Touch</h2>
             <p className="contact-description animate-fade-in-view-delay-1">
-              Have a question, suggestion, or want to submit new trivia questions? 
+              Have a question or suggestion? 
               We'd love to hear from you!
             </p>
             
@@ -185,14 +185,14 @@ function AboutPage({}: AboutPageProps) {
               
               <div className="form-group">
                 <label htmlFor="message" className="form-label">
-                  Message, Question, or Feedback
+                  Message
                 </label>
                 <textarea
                   id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleInputChange}
-                  placeholder="Share your thoughts, submit new questions, or let us know how we can improve..."
+                  placeholder="Share your thoughts or suggestions..."
                   className="form-textarea"
                   rows={6}
                   required

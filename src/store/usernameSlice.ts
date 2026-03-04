@@ -45,7 +45,7 @@ export const generateUsername = createAsyncThunk(
 // Async thunk for creating session with existing username (logged-in users)
 export const createSessionWithUsername = createAsyncThunk(
   'username/createSession',
-  async (username: string, { rejectWithValue }) => {
+  async ({ username, token }: { username: string; token: string }, { rejectWithValue }) => {
     try {
       // Generate a unique session ID
       const session_id = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -55,6 +55,7 @@ export const createSessionWithUsername = createAsyncThunk(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({ session_id, username }),
       });

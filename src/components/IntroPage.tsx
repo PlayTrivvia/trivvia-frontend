@@ -18,7 +18,7 @@ function IntroPage({ onSelectCategory }: IntroPageProps) {
     try {
       // If logged in, create session with their username; otherwise generate random one
       if (isLoggedIn && auth.username) {
-        await dispatch(createSessionWithUsername(auth.username)).unwrap();
+        await dispatch(createSessionWithUsername({ username: auth.username, token: auth.token! })).unwrap();
       } else {
         await dispatch(generateUsername()).unwrap();
       }

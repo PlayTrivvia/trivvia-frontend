@@ -80,20 +80,8 @@ function PremiumPage() {
                 <span className="plan-check-icon">✓</span>
                 Live chat with players
               </li>
-              <li className="feature-item">
-                <span className="plan-check-icon">✓</span>
-                Track your streak
-              </li>
-              <li className="feature-item disabled">
-                <span className="plan-check-icon">✗</span>
-                No custom themes
-              </li>
-              <li className="feature-item disabled">
-                <span className="plan-check-icon">✗</span>
-                No priority support
-              </li>
             </ul>
-
+            
             <button className="plan-button free-button" disabled>
               Current Plan
             </button>
@@ -117,7 +105,7 @@ function PremiumPage() {
               </li>
               <li className="feature-item">
                 <span className="plan-check-icon premium-icon">✓</span>
-                Custom doodly themes
+                Access to all categories
               </li>
               <li className="feature-item">
                 <span className="plan-check-icon premium-icon">✓</span>
@@ -125,11 +113,7 @@ function PremiumPage() {
               </li>
               <li className="feature-item">
                 <span className="plan-check-icon premium-icon">✓</span>
-                Priority support
-              </li>
-              <li className="feature-item">
-                <span className="plan-check-icon premium-icon">✓</span>
-                Ad-free experience
+                Contribute questions & get credited
               </li>
               <li className="feature-item">
                 <span className="plan-check-icon premium-icon">✓</span>

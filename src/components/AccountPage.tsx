@@ -1,13 +1,30 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { logout } from '../store/authSlice';
 import NavigationBar from './NavigationBar';
 import './AccountPage.css';
 
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
+
 function AccountPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const auth = useAppSelector((state) => state.auth);
+  const sessionId = useAppSelector((state) => state.username.sessionId);
+  const [bestStreak, setBestStreak] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!auth.token) return;
+    const url = new URL(`${apiBase}/user_info`);
+    if (sessionId) url.searchParams.set('session_id', sessionId);
+    fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => setBestStreak(data.best_streak ?? 0))
+      .catch(() => setBestStreak(0));
+  }, [auth.token, sessionId]);
 
   // Redirect if not logged in
   if (!auth.token || !auth.username) {
@@ -57,12 +74,12 @@ function AccountPage() {
           <div className="account-card animate-fade-in-delay-3">
             <div className="account-section">
               <h3 className="section-title">Profile Information</h3>
-              
+
               <div className="info-row">
                 <span className="info-label">Username:</span>
                 <span className="info-value">{auth.username?.toLowerCase()}</span>
               </div>
-              
+
               <div className="info-row">
                 <span className="info-label">Email:</span>
                 <span className="info-value">{auth.email}</span>
@@ -78,10 +95,16 @@ function AccountPage() {
                   )}
                 </span>
               </div>
-              
+
               <div className="info-row">
                 <span className="info-label">Best Streak:</span>
-                <span className="info-value">🔥 Coming soon</span>
+                <span className="info-value">
+                  {bestStreak === null
+                    ? '...'
+                    : bestStreak > 0
+                    ? `🔥 ${bestStreak}`
+                    : '🔥 Start playing to build a streak'}
+                </span>
               </div>
             </div>
 
@@ -98,4 +121,3 @@ function AccountPage() {
 }
 
 export default AccountPage;
-

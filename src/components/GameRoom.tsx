@@ -7,9 +7,11 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import Leaderboard from './Leaderboard';
 import ChatComponent from './ChatComponent';
 import HintDisplay from './HintDisplay';
+import InactivityWarningModal from './InactivityWarningModal';
 import { formatCategory, formatDifficulty } from '../utils/categoryFormatter';
 import './GameRoom.css';
 import { clearUsername } from '../store/usernameSlice';
+import { useUserStatus } from '../hooks/useHeartbeat';
 
 
 interface GameRoomProps {
@@ -27,7 +29,10 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const { sessionId } = useAppSelector((state) => state.username);
-  
+  const auth = useAppSelector((state) => state.auth);
+  const isGuest = !auth.token;
+  const { showWarningModal, countdown, handleStayActive } = useUserStatus(isGuest);
+
   // Get category from URL parameters
   const searchParams = new URLSearchParams(location.search);
   const category = searchParams.get('category') || 'general';
@@ -464,6 +469,12 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
           )}
         </main>
       </div>
+
+      <InactivityWarningModal
+        isOpen={showWarningModal}
+        countdown={countdown}
+        onStayActive={handleStayActive}
+      />
     </div>
   );
 }
