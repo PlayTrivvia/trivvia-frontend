@@ -8,6 +8,7 @@ export interface LeaderboardUser {
   last_seen_at?: number;
   status: 'online' | 'away' | 'offline';
   best_streak: number;
+  isPremium?: boolean;
 }
 
 interface LeaderboardProps {
@@ -15,9 +16,10 @@ interface LeaderboardProps {
   currentPlayer: string
   isLoading: boolean
   error: string | null
+  currentPlayerIsPremium?: boolean
 }
 
-function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProps) {
+function Leaderboard({ users, currentPlayer, isLoading, error, currentPlayerIsPremium }: LeaderboardProps) {
   // State to track which users are updating their scores
   const [updatingUsers, setUpdatingUsers] = useState<Set<string>>(new Set());
 
@@ -156,6 +158,9 @@ function Leaderboard({ users, currentPlayer, isLoading, error }: LeaderboardProp
                   </svg>
                 </span>
                 <span className="player-name">{user.username.toLowerCase()}</span>
+                {(user.isPremium || (user.username === currentPlayer && currentPlayerIsPremium)) && (
+                  <span className="premium-crown" title="Premium member">👑</span>
+                )}
                 <div className="player-status">
                   {user.username === currentPlayer && (
                     <span className="you-badge">You</span>

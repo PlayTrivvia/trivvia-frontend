@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { logout } from '../store/authSlice';
+import { logout, setSubscriptionCancelled, setPremiumStatus } from '../store/authSlice';
 import NavigationBar from './NavigationBar';
 import './AccountPage.css';
 
@@ -13,6 +13,10 @@ function AccountPage() {
   const auth = useAppSelector((state) => state.auth);
   const sessionId = useAppSelector((state) => state.username.sessionId);
   const [bestStreak, setBestStreak] = useState<number | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState('');
+  const [cancelSuccess, setCancelSuccess] = useState(false);
 
   useEffect(() => {
     if (!auth.token) return;
@@ -22,7 +26,13 @@ function AccountPage() {
       headers: { Authorization: `Bearer ${auth.token}` },
     })
       .then((r) => r.json())
-      .then((data) => setBestStreak(data.best_streak ?? 0))
+      .then((data) => {
+        setBestStreak(data.best_streak ?? 0);
+        dispatch(setPremiumStatus({
+          isPremium: Boolean(data.is_premium),
+          premiumExpiresAt: data.premium_expires_at ? String(data.premium_expires_at) : null,
+        }));
+      })
       .catch(() => setBestStreak(0));
   }, [auth.token, sessionId]);
 
@@ -41,6 +51,40 @@ function AccountPage() {
     navigate('/premium');
   };
 
+  const handleCancelSubscription = async () => {
+    setIsCancelling(true);
+    setCancelError('');
+    try {
+      const response = await fetch(`${apiBase}/cancel_subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth.token}`,
+        },
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to cancel subscription');
+      }
+      dispatch(setSubscriptionCancelled());
+      setShowCancelModal(false);
+      setCancelSuccess(true);
+    } catch (err) {
+      setCancelError(err instanceof Error ? err.message : 'Something went wrong');
+    } finally {
+      setIsCancelling(false);
+    }
+  };
+
+  const formatExpiry = () => {
+    if (!auth.premiumExpiresAt) return 'the end of your billing period';
+    return new Date(auth.premiumExpiresAt).toLocaleDateString('en-US', {
+      month: 'long', day: 'numeric', year: 'numeric',
+    });
+  };
+
+  const isCancelled = auth.subscriptionCancelled || cancelSuccess;
+
   return (
     <div className="account-page">
       <NavigationBar currentPage="account" />
@@ -49,7 +93,24 @@ function AccountPage() {
           <h1 className="account-title animate-fade-in">Your Account</h1>
           <p className="account-subtitle animate-fade-in-delay-1">Manage your Trivvia profile</p>
 
-          {/* Premium Upgrade Banner */}
+          {/* Premium active banner */}
+          {auth.isPremium && (
+            <div className="premium-active-banner animate-fade-in-delay-2">
+              <div className="premium-active-content">
+                <span className="premium-active-icon">👑</span>
+                <div className="premium-active-text">
+                  <h3 className="premium-active-title">Premium Member</h3>
+                  <p className="premium-active-description">
+                    {isCancelled
+                      ? `Access until ${formatExpiry()}. You'll return to free after that.`
+                      : 'You have full access to all trivia categories.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Upgrade banner for free users */}
           {!auth.isPremium && (
             <div className="premium-banner animate-fade-in-delay-2">
               <div className="premium-banner-content">
@@ -77,7 +138,10 @@ function AccountPage() {
 
               <div className="info-row">
                 <span className="info-label">Username:</span>
-                <span className="info-value">{auth.username?.toLowerCase()}</span>
+                <span className="info-value">
+                  {auth.username?.toLowerCase()}
+                  {auth.isPremium && <span className="username-crown">👑</span>}
+                </span>
               </div>
 
               <div className="info-row">
@@ -88,11 +152,7 @@ function AccountPage() {
               <div className="info-row">
                 <span className="info-label">Account Type:</span>
                 <span className={`info-value ${auth.isPremium ? 'premium-status' : ''}`}>
-                  {auth.isPremium ? (
-                    <>⭐ Premium Member</>
-                  ) : (
-                    'Free'
-                  )}
+                  {auth.isPremium ? '⭐ Premium Member' : 'Free'}
                 </span>
               </div>
 
@@ -108,6 +168,46 @@ function AccountPage() {
               </div>
             </div>
 
+            {/* Subscription management — only for premium users */}
+            {auth.isPremium && (
+              <div className="account-section subscription-section">
+                <h3 className="section-title">Subscription</h3>
+
+                <div className="info-row">
+                  <span className="info-label">Status:</span>
+                  <span className={`info-value ${isCancelled ? 'cancel-scheduled-status' : 'premium-status'}`}>
+                    {isCancelled ? '⚠ Cancellation Scheduled' : '✓ Active'}
+                  </span>
+                </div>
+
+                {auth.premiumExpiresAt && (
+                  <div className="info-row">
+                    <span className="info-label">
+                      {isCancelled ? 'Access until:' : 'Next billing:'}
+                    </span>
+                    <span className="info-value">{formatExpiry()}</span>
+                  </div>
+                )}
+
+                {!isCancelled && (
+                  <div className="subscription-actions">
+                    <button
+                      className="cancel-sub-btn"
+                      onClick={() => setShowCancelModal(true)}
+                    >
+                      Cancel Subscription
+                    </button>
+                  </div>
+                )}
+
+                {isCancelled && (
+                  <p className="cancel-scheduled-notice">
+                    Your subscription has been cancelled. Premium access continues until {formatExpiry()}.
+                  </p>
+                )}
+              </div>
+            )}
+
             <div className="account-actions">
               <button className="logout-button" onClick={handleLogout}>
                 Log out
@@ -116,6 +216,42 @@ function AccountPage() {
           </div>
         </div>
       </div>
+
+      {/* Cancel confirmation modal */}
+      {showCancelModal && (
+        <div className="account-modal-overlay" onClick={() => !isCancelling && setShowCancelModal(false)}>
+          <div className="account-modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="account-modal-header">
+              <div className="account-modal-icon">😢</div>
+              <h2 className="account-modal-title">Cancel Subscription?</h2>
+            </div>
+            <div className="account-modal-body">
+              <p className="account-modal-description">
+                Your Premium access will continue until <strong>{formatExpiry()}</strong>. After that, you'll return to the free plan.
+              </p>
+              {cancelError && (
+                <p className="cancel-modal-error">{cancelError}</p>
+              )}
+            </div>
+            <div className="account-modal-footer">
+              <button
+                className="account-modal-btn-keep"
+                onClick={() => setShowCancelModal(false)}
+                disabled={isCancelling}
+              >
+                Keep Premium
+              </button>
+              <button
+                className="account-modal-btn-cancel"
+                onClick={handleCancelSubscription}
+                disabled={isCancelling}
+              >
+                {isCancelling ? 'Cancelling…' : 'Yes, Cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

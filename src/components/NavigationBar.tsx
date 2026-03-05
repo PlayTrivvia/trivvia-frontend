@@ -3,7 +3,7 @@ import { useAppSelector } from '../store/hooks';
 import './NavigationBar.css';
 
 interface NavigationBarProps {
-  currentPage: 'home' | 'rooms' | 'about' | 'login' | 'account';
+  currentPage: 'home' | 'rooms' | 'about' | 'login' | 'account' | 'premium';
 }
 
 function NavigationBar({ currentPage }: NavigationBarProps) {
@@ -29,6 +29,10 @@ function NavigationBar({ currentPage }: NavigationBarProps) {
 
   const handleAccountClick = () => {
     navigate('/account');
+  };
+
+  const handlePremiumClick = () => {
+    navigate('/premium');
   };
 
   return (
@@ -62,6 +66,12 @@ function NavigationBar({ currentPage }: NavigationBarProps) {
               Login
             </button>
           )}
+          <button
+            className={`nav-link ${currentPage === 'premium' ? 'active' : ''}`}
+            onClick={handlePremiumClick}
+          >
+            Premium
+          </button>
           <button
             className={`nav-categories-btn ${currentPage === 'rooms' ? 'active' : ''}`}
             onClick={handleRoomsClick}

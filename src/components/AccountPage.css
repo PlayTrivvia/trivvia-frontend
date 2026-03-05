@@ -303,6 +303,287 @@
   box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
 }
 
+/* Premium Active Banner */
+.premium-active-banner {
+  width: 100%;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 4px solid #000;
+  border-radius: 20px 24px 18px 22px / 22px 20px 24px 18px;
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.25);
+  transform: rotate(-0.5deg);
+  position: relative;
+  overflow: visible;
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+}
+
+.premium-active-banner::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 22px 26px 20px 24px / 24px 22px 26px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(1px, 1px);
+}
+
+.premium-active-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.premium-active-icon {
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  animation: pulseRotate 2s ease-in-out infinite;
+}
+
+.premium-active-text {
+  flex: 1;
+}
+
+.premium-active-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #065f46;
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.premium-active-description {
+  font-size: 0.9rem;
+  color: #047857;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Username crown */
+.username-crown {
+  margin-left: var(--spacing-xs);
+  font-size: 1rem;
+}
+
+/* Subscription section */
+.subscription-section {
+  border-top: 2px solid #e2e8f0;
+  padding-top: var(--spacing-xl);
+}
+
+.cancel-scheduled-status {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.subscription-actions {
+  padding-top: var(--spacing-lg);
+}
+
+.cancel-sub-btn {
+  background: none;
+  color: #64748b;
+  border: 2px solid #cbd5e1;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border-radius: 12px 14px 10px 13px / 13px 11px 15px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.cancel-sub-btn:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.cancel-scheduled-notice {
+  font-size: var(--text-sm);
+  color: #b45309;
+  background: #fefce8;
+  border: 2px solid #fcd34d;
+  border-radius: 10px 12px 8px 11px / 11px 9px 13px 10px;
+  padding: var(--spacing-md);
+  margin-top: var(--spacing-md);
+  line-height: 1.5;
+}
+
+/* Cancel confirmation modal */
+.account-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-lg);
+}
+
+.account-modal-content {
+  background: #faf8f3;
+  border: 4px solid #000;
+  border-radius: 24px 28px 20px 26px / 26px 22px 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.25);
+  animation: modalBounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  transform: rotate(-0.5deg);
+  position: relative;
+  overflow: visible;
+}
+
+.account-modal-content::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border: 4px solid #000;
+  border-radius: 26px 30px 22px 28px / 28px 24px 30px 26px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(2px, 2px);
+}
+
+@keyframes modalBounceIn {
+  from { opacity: 0; transform: translateY(30px) scale(0.85) rotate(-2deg); }
+  60%  { transform: translateY(-4px) scale(1.03) rotate(0.5deg); }
+  to   { opacity: 1; transform: translateY(0) scale(1) rotate(-0.5deg); }
+}
+
+.account-modal-header {
+  padding: var(--spacing-xl);
+  text-align: center;
+  border-bottom: 3px solid #000;
+}
+
+.account-modal-icon {
+  font-size: 3rem;
+  display: inline-block;
+  margin-bottom: var(--spacing-md);
+  animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+}
+
+@keyframes iconBounce {
+  0%   { transform: scale(0) rotate(-10deg); }
+  50%  { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.account-modal-title {
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.account-modal-body {
+  padding: var(--spacing-xl);
+  text-align: center;
+}
+
+.account-modal-description {
+  font-size: var(--text-base);
+  color: #475569;
+  line-height: 1.625;
+  margin: 0;
+}
+
+.cancel-modal-error {
+  color: #ef4444;
+  font-size: var(--text-sm);
+  margin-top: var(--spacing-md);
+  font-family: inherit;
+}
+
+.account-modal-footer {
+  padding: var(--spacing-xl);
+  border-top: 3px solid #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.account-modal-btn-keep {
+  background: #FF5E41;
+  color: white;
+  border: 4px solid #000;
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--text-base);
+  font-weight: 700;
+  border-radius: 18px 22px 14px 20px / 20px 16px 22px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  min-width: 180px;
+  box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: visible;
+}
+
+.account-modal-btn-keep::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 4px solid #000;
+  border-radius: 20px 24px 16px 22px / 22px 18px 24px 20px;
+  z-index: -1;
+  opacity: 0.4;
+  transform: rotate(1.2deg) translate(1px, 1px);
+}
+
+.account-modal-btn-keep:hover:not(:disabled) {
+  background: #ff4d2e;
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+}
+
+.account-modal-btn-keep:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.account-modal-btn-cancel {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: #94a3b8;
+  font-family: inherit;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.account-modal-btn-cancel:hover:not(:disabled) {
+  color: #ef4444;
+}
+
+.account-modal-btn-cancel:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+@media (max-width: 480px) {
+  .premium-active-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .account-modal-overlay {
+    padding: var(--spacing-md);
+  }
+
+  .account-modal-content {
+    max-width: none;
+    width: 100%;
+  }
+}
+
 /* Animations */
 @keyframes floatUp {
   from {

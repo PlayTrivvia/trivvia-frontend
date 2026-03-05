@@ -235,6 +235,12 @@
   gap: var(--spacing-lg);
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
 .game-brand {
   display: flex;
   align-items: center;
@@ -353,6 +359,32 @@
   background: #f0ede5;
   transform: translate(-2px, -2px) rotate(-0.5deg);
   box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+}
+
+.guest-signup-nudge {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #475569;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  white-space: nowrap;
+}
+
+.guest-signup-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #6366f1;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s ease;
+}
+
+.guest-signup-link:hover {
+  color: #4f51e0;
 }
 
 .about-button {
@@ -916,6 +948,10 @@
   
   .leave-button {
     display: none; /* Hide leave button on mobile */
+  }
+
+  .guest-signup-nudge {
+    display: none;
   }
   
 

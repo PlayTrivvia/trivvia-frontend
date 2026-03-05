@@ -324,6 +324,33 @@
   margin: 0;
 }
 
+/* "Your Plan ✓" badge variant */
+.your-plan-badge {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #000;
+}
+
+/* Expiry label under price */
+.premium-expiry-label {
+  font-size: 0.875rem;
+  color: #10b981;
+  font-weight: 600;
+  margin: var(--spacing-sm) 0 0 0;
+}
+
+/* Manage subscription button */
+.manage-sub-button {
+  background: #10b981;
+  color: white;
+}
+
+.manage-sub-button:hover:not(:disabled) {
+  background: #059669;
+  transform: translate(-2px, -2px) rotate(-0.5deg);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
+}
+
 .premium-footer {
   text-align: center;
   margin-top: 60px;

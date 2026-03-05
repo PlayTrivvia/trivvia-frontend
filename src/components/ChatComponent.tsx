@@ -18,9 +18,10 @@ interface ChatComponentProps {
   onSendMessage: (message: string) => void
   currentPlayer: string
   isLoadingHistory?: boolean
+  currentPlayerIsPremium?: boolean
 }
 
-function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatComponentProps) {
+function ChatComponent({ messages, onSendMessage, isLoadingHistory, currentPlayerIsPremium }: ChatComponentProps) {
   const [newMessage, setNewMessage] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
@@ -109,6 +110,9 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory }: ChatCompon
                     </span>
                   )}
                   {message.type === 'bot' ? 'Trivvia Bot' : message.player.toLowerCase()}
+                  {message.isOwnMessage && currentPlayerIsPremium && (
+                    <span className="premium-crown" title="Premium member">👑</span>
+                  )}
                 </span>
                 <span className="message-timestamp">
                   {formatTimestamp(message.timestamp)}

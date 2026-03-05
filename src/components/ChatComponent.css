@@ -1,3 +1,10 @@
+.premium-crown {
+  font-size: 0.7rem;
+  margin-left: 3px;
+  vertical-align: middle;
+  line-height: 1;
+}
+
 /* Chat history loading indicator */
 .chat-history-loading {
   display: flex;

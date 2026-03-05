@@ -385,6 +385,15 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
                 <path d="M12 18L24 30L36 18" stroke="#6366F1" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </button>
+            {isGuest && (
+              <span className="guest-signup-nudge">
+                Playing as guest —{' '}
+                <button className="guest-signup-link" onClick={() => navigate('/signup')}>
+                  Sign up
+                </button>
+                {' '}to save your streak
+              </span>
+            )}
             <button className="leave-button secondary" onClick={onLeaveGame}>
               Leave Game
             </button>
@@ -398,6 +407,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
               currentPlayer={playerName}
               isLoading={leaderboardLoading}
               error={null}
+              currentPlayerIsPremium={auth.isPremium}
             />
           </div>
         )}
@@ -410,6 +420,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
             currentPlayer={playerName}
             isLoading={leaderboardLoading}
             error={null}
+            currentPlayerIsPremium={auth.isPremium}
           />
         </aside>
 
@@ -438,6 +449,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
                 onSendMessage={handleSendMessage}
                 currentPlayer={playerName}
                 isLoadingHistory={isLoadingChatHistory}
+                currentPlayerIsPremium={auth.isPremium}
               />
             </div>
           ) : (

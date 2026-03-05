@@ -48,12 +48,18 @@ function PremiumPage() {
 
   return (
     <div className="premium-page">
-      <NavigationBar currentPage="home" />
+      <NavigationBar currentPage="premium" />
       
       <div className="premium-container">
         <header className="premium-header">
-          <h1 className="premium-title animate-fade-in">Upgrade to Premium</h1>
-          <p className="premium-subtitle animate-fade-in-delay-1">Unlock exclusive features and support Trivvia</p>
+          <h1 className="premium-title animate-fade-in">
+            {auth.isPremium ? "You're on Premium ✨" : "Upgrade to Premium"}
+          </h1>
+          <p className="premium-subtitle animate-fade-in-delay-1">
+            {auth.isPremium
+              ? "You have full access to all trivia categories."
+              : "Unlock exclusive features and support Trivvia"}
+          </p>
         </header>
 
         <div className="pricing-cards">
@@ -83,19 +89,27 @@ function PremiumPage() {
             </ul>
             
             <button className="plan-button free-button" disabled>
-              Current Plan
+              {auth.isPremium ? 'Free Tier' : 'Current Plan'}
             </button>
           </div>
 
           {/* Premium Tier */}
           <div className="pricing-card premium-card featured animate-fade-in-delay-3">
-            <div className="featured-badge">Most Popular</div>
+            {auth.isPremium
+              ? <div className="featured-badge your-plan-badge">Your Plan ✓</div>
+              : <div className="featured-badge">Most Popular</div>
+            }
             <div className="card-header">
               <h3 className="card-title">Premium</h3>
               <div className="card-price">
                 <span className="price">$4.99</span>
                 <span className="period">/month</span>
               </div>
+              {auth.isPremium && auth.premiumExpiresAt && (
+                <p className="premium-expiry-label">
+                  Active until {new Date(auth.premiumExpiresAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                </p>
+              )}
             </div>
             
             <ul className="feature-list">
@@ -127,13 +141,22 @@ function PremiumPage() {
               </div>
             )}
 
-            <button 
-              className="plan-button premium-button" 
-              onClick={handleUpgrade}
-              disabled={isProcessing}
-            >
-              {isProcessing ? 'Processing...' : isLoggedIn ? 'Upgrade Now' : 'Sign up to Upgrade'}
-            </button>
+            {auth.isPremium ? (
+              <button
+                className="plan-button manage-sub-button"
+                onClick={() => navigate('/account')}
+              >
+                Manage Subscription →
+              </button>
+            ) : (
+              <button
+                className="plan-button premium-button"
+                onClick={handleUpgrade}
+                disabled={isProcessing}
+              >
+                {isProcessing ? 'Processing...' : isLoggedIn ? 'Upgrade Now' : 'Sign up to Upgrade'}
+              </button>
+            )}
           </div>
         </div>
 

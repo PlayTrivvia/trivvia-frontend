@@ -9,6 +9,7 @@ interface AuthState {
   needsUsername: boolean;
   isPremium: boolean;
   premiumExpiresAt: string | null;
+  subscriptionCancelled: boolean;
   isLoading: boolean;
   error: string | null;
 }
@@ -27,6 +28,7 @@ const initialState: AuthState = {
   needsUsername: false,
   isPremium: typeof window !== 'undefined' ? localStorage.getItem('trivvia_is_premium') === 'true' : false,
   premiumExpiresAt: typeof window !== 'undefined' ? localStorage.getItem('trivvia_premium_expires_at') : null,
+  subscriptionCancelled: false,
   isLoading: false,
   error: null,
 };
@@ -64,6 +66,8 @@ export const verifyCode = createAsyncThunk<
     username?: string;
     verified: boolean;
     needsUsername: boolean;
+    isPremium: boolean;
+    premiumExpiresAt: string | null;
   },
   { email: string; code: string },
   { rejectValue: string }
@@ -90,6 +94,8 @@ export const verifyCode = createAsyncThunk<
       username: data.username as string | undefined,
       verified: Boolean(data.verified),
       needsUsername: Boolean(data.needs_username),
+      isPremium: Boolean(data.is_premium),
+      premiumExpiresAt: data.premium_expires_at ? String(data.premium_expires_at) : null,
     };
   } catch (error) {
     return rejectWithValue(error instanceof Error ? error.message : 'Failed to verify code');
@@ -132,6 +138,21 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setSubscriptionCancelled: (state) => {
+      state.subscriptionCancelled = true;
+    },
+    setPremiumStatus: (state, action: { payload: { isPremium: boolean; premiumExpiresAt: string | null } }) => {
+      state.isPremium = action.payload.isPremium;
+      state.premiumExpiresAt = action.payload.premiumExpiresAt;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('trivvia_is_premium', String(action.payload.isPremium));
+        if (action.payload.premiumExpiresAt) {
+          localStorage.setItem('trivvia_premium_expires_at', action.payload.premiumExpiresAt);
+        } else {
+          localStorage.removeItem('trivvia_premium_expires_at');
+        }
+      }
+    },
     logout: (state) => {
       state.token = null;
       state.userId = null;
@@ -141,6 +162,7 @@ const authSlice = createSlice({
       state.needsUsername = false;
       state.isPremium = false;
       state.premiumExpiresAt = null;
+      state.subscriptionCancelled = false;
       state.error = null;
 
       if (typeof window !== 'undefined') {
@@ -180,6 +202,8 @@ const authSlice = createSlice({
         state.username = action.payload.username || null;
         state.verified = action.payload.verified;
         state.needsUsername = action.payload.needsUsername;
+        state.isPremium = action.payload.isPremium;
+        state.premiumExpiresAt = action.payload.premiumExpiresAt;
         state.error = null;
 
         if (typeof window !== 'undefined') {
@@ -187,8 +211,14 @@ const authSlice = createSlice({
           localStorage.setItem('trivvia_user_id', String(action.payload.userId));
           localStorage.setItem('trivvia_email', action.payload.email);
           localStorage.setItem('trivvia_verified', String(action.payload.verified));
+          localStorage.setItem('trivvia_is_premium', String(action.payload.isPremium));
           if (action.payload.username) {
             localStorage.setItem('trivvia_username', action.payload.username);
+          }
+          if (action.payload.premiumExpiresAt) {
+            localStorage.setItem('trivvia_premium_expires_at', action.payload.premiumExpiresAt);
+          } else {
+            localStorage.removeItem('trivvia_premium_expires_at');
           }
         }
       })
@@ -216,7 +246,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, setSubscriptionCancelled, setPremiumStatus } = authSlice.actions;
 export default authSlice.reducer;
 
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { generateUsername, createSessionWithUsername } from '../store/usernameSlice';
 import NavigationBar from './NavigationBar';
+import PremiumUnlockModal from './PremiumUnlockModal';
 import './RoomsPage.css';
 
 interface Room {
@@ -99,7 +100,7 @@ function RoomsPage({}: RoomsPageProps) {
   const dispatch = useAppDispatch();
   const auth = useAppSelector((state) => state.auth);
   const isLoggedIn = !!auth.token && !!auth.username;
-  const [showComingSoonModal, setShowComingSoonModal] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   const handleButtonClick = async (room: Room) => {
@@ -117,12 +118,12 @@ function RoomsPage({}: RoomsPageProps) {
       }
     } else {
       setSelectedRoom(room);
-      setShowComingSoonModal(true);
+      setShowPremiumModal(true);
     }
   };
 
   const closeModal = () => {
-    setShowComingSoonModal(false);
+    setShowPremiumModal(false);
     setSelectedRoom(null);
   };
 
@@ -162,7 +163,7 @@ function RoomsPage({}: RoomsPageProps) {
                     className="room-button coming-soon-button"
                     onClick={() => handleButtonClick(room)}
                   >
-                    Coming Soon
+                    Upgrade to Premium
                   </button>
                 )}
               </div>
@@ -175,28 +176,13 @@ function RoomsPage({}: RoomsPageProps) {
         </footer>
       </div>
 
-      {/* Coming Soon Modal */}
-      {showComingSoonModal && selectedRoom && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-icon">{selectedRoom.icon}</div>
-              <h2 className="modal-title">{selectedRoom.name}</h2>
-            </div>
-            <div className="modal-body">
-              <p className="modal-description">{selectedRoom.description}</p>
-              <div className="coming-soon-message">
-                <span className="coming-soon-text">Coming Soon!</span>
-                <p className="coming-soon-subtext">This category is currently under development. Stay tuned for updates!</p>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button className="modal-button" onClick={closeModal}>
-                Got it!
-              </button>
-            </div>
-          </div>
-        </div>
+      {showPremiumModal && selectedRoom && (
+        <PremiumUnlockModal
+          icon={selectedRoom.icon}
+          name={selectedRoom.name}
+          description={selectedRoom.description}
+          onClose={closeModal}
+        />
       )}
     </div>
   );
