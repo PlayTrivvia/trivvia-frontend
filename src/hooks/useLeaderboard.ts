@@ -41,7 +41,7 @@ export const useLeaderboard = (room: string = 'general') => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [room]);
 
   const handleLeaderboardUpdate = useCallback((message: any) => { 
     try {

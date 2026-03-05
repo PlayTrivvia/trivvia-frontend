@@ -20,12 +20,18 @@ export const useWebSocket = (
   const effectRunCountRef = useRef(0);
   const lastSessionIdRef = useRef<string | null>(null);
   const hasConnectedRef = useRef(false);
-  
+  const roomRef = useRef(room);
+
   // Store callbacks in refs to prevent unnecessary reconnections
   const onSessionDroppedRef = useRef(onSessionDropped);
   const onLeaderboardUpdateRef = useRef(onLeaderboardUpdate);
   const onChatMessageRef = useRef(onChatMessage);
   const onTimerUpdateRef = useRef(onTimerUpdate);
+
+  // Keep room ref up to date
+  useEffect(() => {
+    roomRef.current = room;
+  }, [room]);
   
   useEffect(() => {
     if (lastSessionIdRef.current !== sessionId) {
@@ -60,7 +66,7 @@ export const useWebSocket = (
 
     isConnectingRef.current = true;
     const wsBase = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8081';
-    const wsUrl = `${wsBase}/ws?session_id=${sessionId}&room=${room}`;
+    const wsUrl = `${wsBase}/ws?session_id=${sessionId}&room=${roomRef.current}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
