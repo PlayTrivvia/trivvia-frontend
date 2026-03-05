@@ -53,8 +53,6 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   };
   
   const categoryInfo = getCategoryInfo(category);
-  const isGeneralCategory = category === 'general';
-  
   const [showWelcome, setShowWelcome] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isHeaderExpanded, setIsHeaderExpanded] = useState(false);
@@ -88,7 +86,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
 
 
   // Real-time leaderboard data
-  const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate } = useLeaderboard();
+  const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate } = useLeaderboard(category);
   
   
   // Function to handle score updates
@@ -116,7 +114,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     try {
       setIsLoadingChatHistory(true);
       const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
-      const response = await fetch(`${apiBase}/get_chat_history`);
+      const response = await fetch(`${apiBase}/get_chat_history?room=${category}`);
       if (response.ok) {
         const data = await response.json();
         
@@ -167,7 +165,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const fetchCurrentQuestion = async () => {
     try {
       const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
-      const response = await fetch(`${apiBase}/current_question`);
+      const response = await fetch(`${apiBase}/current_question?room=${category}`);
       if (response.ok) {
         const data = await response.json();
         
@@ -191,7 +189,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const fetchCurrentHint = async () => {
     try {
       const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
-      const response = await fetch(`${apiBase}/current_hint`);
+      const response = await fetch(`${apiBase}/current_hint?room=${category}`);
       if (response.ok) {
         const data = await response.json();
         
@@ -212,7 +210,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   };
 
   // WebSocket connection
-  const { isConnected, sendMessage } = useWebSocket(() => {
+  const { isConnected, sendMessage } = useWebSocket(category, () => {
     navigate('/rooms');
   }, onLeaderboardUpdate, (chatData) => {
     
@@ -352,9 +350,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
             <p className="welcome-subtitle">Your nickname is:</p>
             <div className="nickname-display">{playerName.toLowerCase()}</div>
             <div className="welcome-loading">
-              <span className="loading-dots">
-                {isGeneralCategory ? 'Preparing your game' : 'This category is coming soon!'}
-              </span>
+              <span className="loading-dots">Preparing your game</span>
             </div>
           </div>
         </div>
@@ -425,60 +421,31 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
         </aside>
 
         <main className="game-main">
-          {isGeneralCategory ? (
-            <div className="unified-chat-section">
-              <div className="question-header">
-                <span className="question-category">{currentQuestion?.category ? formatCategory(currentQuestion.category) : 'Loading...'}</span>
-                <span className="question-difficulty">{currentQuestion?.difficulty ? formatDifficulty(currentQuestion.difficulty) : 'Loading...'}</span>
-              </div>
-
-              <div className="question-content">
-                <h2 className="question-text">{currentQuestion?.question || 'Loading trivia question...'}</h2>
-                
-                {/* Display hint below the question */}
-                {currentHint && (
-                  <HintDisplay 
-                    hint={currentHint.hint}
-                    done={currentHint.done}
-                  />
-                )}
-              </div>
-
-              <ChatComponent
-                messages={messages}
-                onSendMessage={handleSendMessage}
-                currentPlayer={playerName}
-                isLoadingHistory={isLoadingChatHistory}
-                currentPlayerIsPremium={auth.isPremium}
-              />
+          <div className="unified-chat-section">
+            <div className="question-header">
+              <span className="question-category">{currentQuestion?.category ? formatCategory(currentQuestion.category) : 'Loading...'}</span>
+              <span className="question-difficulty">{currentQuestion?.difficulty ? formatDifficulty(currentQuestion.difficulty) : 'Loading...'}</span>
             </div>
-          ) : (
-            <div className="coming-soon-section">
-              <div className="coming-soon-content">
-                <div className="coming-soon-icon" style={{ '--category-color': categoryInfo.color } as React.CSSProperties}>
-                  {categoryInfo.icon}
-                </div>
-                <h2 className="coming-soon-title">{categoryInfo.name}</h2>
-                <p className="coming-soon-message">
-                  This category is coming soon! We're working hard to bring you specialized trivia questions for {categoryInfo.name.toLowerCase()}.
-                </p>
-                <div className="coming-soon-actions">
-                  <button 
-                    className="back-to-rooms-button"
-                    onClick={() => navigate('/rooms')}
-                  >
-                    ← Back to Categories
-                  </button>
-                  <button 
-                    className="play-general-button"
-                    onClick={() => navigate('/rooms')}
-                  >
-                    Back to Categories
-                  </button>
-                </div>
-              </div>
+
+            <div className="question-content">
+              <h2 className="question-text">{currentQuestion?.question || 'Loading trivia question...'}</h2>
+
+              {currentHint && (
+                <HintDisplay
+                  hint={currentHint.hint}
+                  done={currentHint.done}
+                />
+              )}
             </div>
-          )}
+
+            <ChatComponent
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              currentPlayer={playerName}
+              isLoadingHistory={isLoadingChatHistory}
+              currentPlayerIsPremium={auth.isPremium}
+            />
+          </div>
         </main>
       </div>
 

@@ -9,7 +9,7 @@ export interface LeaderboardUser {
   best_streak: number;
 }
 
-export const useLeaderboard = () => {
+export const useLeaderboard = (room: string = 'general') => {
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +18,7 @@ export const useLeaderboard = () => {
     try {
       setIsLoading(true);
       const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
-      const response = await fetch(`${apiBase}/active_users`);
+      const response = await fetch(`${apiBase}/active_users?room=${room}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -41,7 +41,7 @@ export const useLeaderboard = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [room]);
 
   const handleLeaderboardUpdate = useCallback((message: any) => { 
     try {
