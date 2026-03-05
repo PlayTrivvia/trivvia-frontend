@@ -32,7 +32,7 @@ const rooms: Room[] = [
     description: 'Physics, chemistry, biology, and more',
     icon: '🔬',
     color: '#10B981',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   },
   {
@@ -41,7 +41,7 @@ const rooms: Room[] = [
     description: 'Numbers, equations, and problem solving',
     icon: '🧮',
     color: '#F59E0B',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   },
   {
@@ -50,7 +50,7 @@ const rooms: Room[] = [
     description: 'Movies, music, TV shows, and celebrities',
     icon: '🎬',
     color: '#EF4444',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   },
   {
@@ -59,7 +59,7 @@ const rooms: Room[] = [
     description: 'World history, events, and figures',
     icon: '🏛️',
     color: '#8B5CF6',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   },
   {
@@ -68,7 +68,7 @@ const rooms: Room[] = [
     description: 'Athletes, teams, and sporting events',
     icon: '⚽',
     color: '#06B6D4',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   },
   {
@@ -77,7 +77,7 @@ const rooms: Room[] = [
     description: 'Countries, capitals, and landmarks',
     icon: '🌍',
     color: '#84CC16',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   },
   {
@@ -86,7 +86,7 @@ const rooms: Room[] = [
     description: 'Books, authors, and literary works',
     icon: '📚',
     color: '#F97316',
-    isActive: false,
+    isActive: true,
     buttonText: 'Play'
   }
 ];
@@ -104,21 +104,15 @@ function RoomsPage({}: RoomsPageProps) {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   const handleButtonClick = async (room: Room) => {
-    if (room.isActive) {
-      // If logged in, create session with their username; otherwise generate random one
-      try {
-        if (isLoggedIn && auth.username) {
-          await dispatch(createSessionWithUsername({ username: auth.username, token: auth.token! })).unwrap();
-        } else {
-          await dispatch(generateUsername()).unwrap();
-        }
-        navigate('/game');
-      } catch (error) {
-        console.error('Failed to create session:', error);
+    try {
+      if (isLoggedIn && auth.username) {
+        await dispatch(createSessionWithUsername({ username: auth.username, token: auth.token! })).unwrap();
+      } else {
+        await dispatch(generateUsername()).unwrap();
       }
-    } else {
-      setSelectedRoom(room);
-      setShowPremiumModal(true);
+      navigate(`/game?category=${room.id}`);
+    } catch (error) {
+      console.error('Failed to create session:', error);
     }
   };
 

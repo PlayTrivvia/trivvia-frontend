@@ -8,7 +8,8 @@ export interface WebSocketMessage {
 }
 
 export const useWebSocket = (
-  onSessionDropped: () => void, 
+  room: string,
+  onSessionDropped: () => void,
   onLeaderboardUpdate?: (data: any) => void,
   onChatMessage?: (data: any) => void,
   onTimerUpdate?: (data: any) => void
@@ -59,7 +60,7 @@ export const useWebSocket = (
 
     isConnectingRef.current = true;
     const wsBase = import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8081';
-    const wsUrl = `${wsBase}/ws?session_id=${sessionId}`;
+    const wsUrl = `${wsBase}/ws?session_id=${sessionId}&room=${room}`;
     const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
