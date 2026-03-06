@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useLeaderboard } from '../hooks/useLeaderboard';
@@ -12,6 +12,7 @@ import { formatCategory, formatDifficulty } from '../utils/categoryFormatter';
 import './GameRoom.css';
 import { clearUsername } from '../store/usernameSlice';
 import { useUserStatus } from '../hooks/useHeartbeat';
+import { useVisualViewport } from '../hooks/useVisualViewport';
 
 
 interface GameRoomProps {
@@ -20,6 +21,8 @@ interface GameRoomProps {
 }
 
 export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
+  const gameRoomRef = useRef<HTMLDivElement>(null);
+  const isKeyboardOpen = useVisualViewport(gameRoomRef);
   const dispatch = useAppDispatch();
   useEffect(() => {
     const handleUnload = () => dispatch(clearUsername());
@@ -31,7 +34,6 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   const { sessionId } = useAppSelector((state) => state.username);
   const auth = useAppSelector((state) => state.auth);
   const isGuest = !auth.token;
-  const { showWarningModal, countdown, handleStayActive } = useUserStatus(isGuest);
 
   // Get category from URL parameters
   const searchParams = new URLSearchParams(location.search);
@@ -68,7 +70,10 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     hint: string;
     done: boolean;
   } | null>(null);
-  
+
+  // Countdown before hints start appearing (seconds)
+  const [hintCountdown, setHintCountdown] = useState<number>(0);
+
   // Timer state - now using synchronized timer
 
 
@@ -86,7 +91,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
 
 
   // Real-time leaderboard data
-  const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate } = useLeaderboard(category);
+  const { users: leaderboardUsers, isLoading: leaderboardLoading, onLeaderboardUpdate, refresh: refreshLeaderboard } = useLeaderboard(category);
   
   
   // Function to handle score updates
@@ -210,7 +215,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   };
 
   // WebSocket connection
-  const { isConnected, sendMessage } = useWebSocket(category, () => {
+  const { isConnected, sendMessage, sendStatusUpdate } = useWebSocket(category, () => {
     navigate('/rooms');
   }, onLeaderboardUpdate, (chatData) => {
     
@@ -226,8 +231,9 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
         difficulty: decodeHtmlEntities(chatData.difficulty),
       });
       
-      // Clear hint when new question comes in
+      // Clear hint and start countdown before hints appear
       setCurrentHint(null);
+      setHintCountdown(20);
       return;
     }
     
@@ -239,11 +245,12 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     
     // Handle hints
     if (chatData?.type === 'trivia_hint') {
-      
       setCurrentHint({
         hint: chatData.hint,
         done: chatData.done
       });
+      // Restart countdown for next letter, or stop if hint is fully revealed
+      setHintCountdown(chatData.done ? 0 : 20);
       return;
     }
     
@@ -279,23 +286,36 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
     }
   });
 
+  const { showWarningModal, countdown, handleStayActive } = useUserStatus(isGuest, sendStatusUpdate, sendMessage);
+
+  // Tick the hint countdown every second
+  useEffect(() => {
+    if (hintCountdown <= 0) return;
+    const id = setInterval(() => {
+      setHintCountdown(prev => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [hintCountdown]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsTransitioning(true);
       setTimeout(() => {
         setShowWelcome(false);
         setIsTransitioning(false);
-        
+
         // Load chat history when the game starts
         loadChatHistory();
-        
+
         // Fetch current question when user joins
         fetchCurrentQuestion();
-        
+
         // Fetch current hint when user joins
         fetchCurrentHint();
-        
-        // Welcome message and trivia question will be sent by backend via websocket
+
+        // Refresh leaderboard now that the WS connection is established,
+        // so the current user appears in their own leaderboard.
+        refreshLeaderboard();
       }, 300);
     }, 4000);
     return () => clearTimeout(timer);
@@ -359,7 +379,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   }
 
   return (
-    <div className={`game-room ${isTransitioning ? 'fade-in' : ''}`}>
+    <div ref={gameRoomRef} className={`game-room ${isTransitioning ? 'fade-in' : ''} ${isKeyboardOpen ? 'keyboard-open' : ''}`}>
       <header className={`game-header ${isHeaderExpanded ? 'expanded' : ''}`}>
         <div className="header-main">
           <div className="header-left">
@@ -390,8 +410,9 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
                 {' '}to save your streak
               </span>
             )}
-            <button className="leave-button secondary" onClick={onLeaveGame}>
-              Leave Game
+            <button className="leave-button secondary" onClick={onLeaveGame} aria-label="Leave Game">
+              <span className="leave-text">Leave Game</span>
+              <span className="leave-icon" aria-hidden="true">✕</span>
             </button>
           </div>
         </div>
@@ -430,10 +451,11 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
             <div className="question-content">
               <h2 className="question-text">{currentQuestion?.question || 'Loading trivia question...'}</h2>
 
-              {currentHint && (
+              {(hintCountdown > 0 || currentHint) && (
                 <HintDisplay
-                  hint={currentHint.hint}
-                  done={currentHint.done}
+                  hint={currentHint?.hint || ''}
+                  done={currentHint?.done || false}
+                  countdown={hintCountdown}
                 />
               )}
             </div>

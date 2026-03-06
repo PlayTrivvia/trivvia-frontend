@@ -455,7 +455,9 @@
 /* Mobile adjustments */
 @media (max-width: 768px) {
   .chat-component {
-    height: 300px;
+    height: auto;
+    flex: 1;
+    min-height: 0;
     /* Ensure proper mobile viewport handling */
     position: relative;
     -webkit-overflow-scrolling: touch;
@@ -471,6 +473,7 @@
   
   .chat-form {
     padding: var(--spacing-md);
+    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom, 0px));
     /* Ensure form stays at bottom on mobile */
     position: sticky;
     bottom: 0;
@@ -536,16 +539,16 @@
   .chat-input {
     border-radius: 4px;
     padding: var(--spacing-sm) var(--spacing-sm);
-    height: 40px; /* Match send button height */
+    min-height: 44px;
     box-sizing: border-box;
     line-height: 1.2;
     flex: 1;
   }
-  
+
   .send-button {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--text-xs);
-    height: 40px; /* Ensure consistent height */
+    min-height: 44px;
     box-sizing: border-box;
     flex-shrink: 0;
   }

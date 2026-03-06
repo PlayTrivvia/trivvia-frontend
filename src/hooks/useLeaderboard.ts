@@ -57,10 +57,10 @@ export const useLeaderboard = (room: string = 'general') => {
         const newUser: LeaderboardUser = {
           username: username,
           session_id: message.session_id,
-          status: 'online', // Default to online when joining
-          best_streak: 0,
-          joined_at: Math.floor(Date.now() / 1000), // Use Unix timestamp
-          last_seen_at: Math.floor(Date.now() / 1000) // Use Unix timestamp
+          status: 'online',
+          best_streak: message.best_streak || 0,
+          joined_at: Math.floor(Date.now() / 1000),
+          last_seen_at: Math.floor(Date.now() / 1000),
         };
         
         setUsers(prevUsers => {

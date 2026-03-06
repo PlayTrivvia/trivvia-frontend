@@ -12,8 +12,6 @@ interface Room {
   description: string;
   icon: string;
   color: string;
-  isActive: boolean;
-  buttonText: string;
 }
 
 const rooms: Room[] = [
@@ -23,8 +21,6 @@ const rooms: Room[] = [
     description: 'Mix of questions from all categories',
     icon: '🧠',
     color: '#6366F1',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'science',
@@ -32,8 +28,6 @@ const rooms: Room[] = [
     description: 'Physics, chemistry, biology, and more',
     icon: '🔬',
     color: '#10B981',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'math',
@@ -41,8 +35,6 @@ const rooms: Room[] = [
     description: 'Numbers, equations, and problem solving',
     icon: '🧮',
     color: '#F59E0B',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'pop-culture',
@@ -50,8 +42,6 @@ const rooms: Room[] = [
     description: 'Movies, music, TV shows, and celebrities',
     icon: '🎬',
     color: '#EF4444',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'history',
@@ -59,8 +49,6 @@ const rooms: Room[] = [
     description: 'World history, events, and figures',
     icon: '🏛️',
     color: '#8B5CF6',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'sports',
@@ -68,8 +56,6 @@ const rooms: Room[] = [
     description: 'Athletes, teams, and sporting events',
     icon: '⚽',
     color: '#06B6D4',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'geography',
@@ -77,8 +63,6 @@ const rooms: Room[] = [
     description: 'Countries, capitals, and landmarks',
     icon: '🌍',
     color: '#84CC16',
-    isActive: true,
-    buttonText: 'Play'
   },
   {
     id: 'literature',
@@ -86,8 +70,6 @@ const rooms: Room[] = [
     description: 'Books, authors, and literary works',
     icon: '📚',
     color: '#F97316',
-    isActive: true,
-    buttonText: 'Play'
   }
 ];
 
@@ -103,7 +85,16 @@ function RoomsPage({}: RoomsPageProps) {
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
+  const isPremium = isLoggedIn && auth.isPremium;
+
   const handleButtonClick = async (room: Room) => {
+    // Non-general rooms require premium access
+    if (room.id !== 'general' && !isPremium) {
+      setSelectedRoom(room);
+      setShowPremiumModal(true);
+      return;
+    }
+
     try {
       if (isLoggedIn && auth.username) {
         await dispatch(createSessionWithUsername({ username: auth.username, token: auth.token! })).unwrap();
@@ -134,7 +125,7 @@ function RoomsPage({}: RoomsPageProps) {
           {rooms.map((room, index) => (
             <div
               key={room.id}
-              className={`room-card ${room.isActive ? 'active' : 'coming-soon'} animate-fade-in-view-delay-${Math.min(index + 1, 3)}`}
+              className={`room-card ${room.id === 'general' || isPremium ? 'active' : 'coming-soon'} animate-fade-in-view-delay-${Math.min(index + 1, 3)}`}
               style={{ '--room-color': room.color } as React.CSSProperties}
             >
               <div className="room-top-section" data-category={room.id}>
@@ -145,15 +136,15 @@ function RoomsPage({}: RoomsPageProps) {
                 </div>
               </div>
               <div className="room-bottom-section">
-                {room.isActive ? (
-                  <button 
+                {room.id === 'general' || isPremium ? (
+                  <button
                     className="room-button active-button"
                     onClick={() => handleButtonClick(room)}
                   >
-                    {room.buttonText}
+                    Play
                   </button>
                 ) : (
-                  <button 
+                  <button
                     className="room-button coming-soon-button"
                     onClick={() => handleButtonClick(room)}
                   >

@@ -1,14 +1,16 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { useWebSocket } from './useWebSocket';
 import { clearUsername } from '../store/usernameSlice';
 
-export const useUserStatus = (isGuest: boolean) => {
+export const useUserStatus = (
+  isGuest: boolean,
+  sendStatusUpdate: (status: 'online' | 'away') => void,
+  sendMessage: (message: any) => void,
+) => {
   const { sessionId } = useAppSelector((state) => state.username);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { sendStatusUpdate, sendMessage } = useWebSocket(() => {}, () => {}, () => {});
 
   const statusIntervalRef = useRef<number | null>(null);
   const countdownIntervalRef = useRef<number | null>(null);

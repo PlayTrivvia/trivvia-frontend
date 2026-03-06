@@ -1,14 +1,22 @@
 export function formatCategory(category: string): string {
   if (!category) return '';
-  
+
+  // Already formatted as "Category > Subcategory" from our DB — return as-is
+  if (category.includes(' > ')) return category;
+
   // Common category mappings for better readability
   const categoryMap: Record<string, string> = {
     'arts_and_literature': 'Arts & Literature',
     'entertainment': 'Entertainment',
     'geography': 'Geography',
     'history': 'History',
-    'science': 'Science',
+    'science': 'Science & Nature',
+    'science & nature': 'Science & Nature',
+    'mathematics': 'Mathematics',
+    'pop culture': 'Pop Culture',
+    'literature': 'Literature',
     'sports': 'Sports',
+    'sport_and_leisure': 'Sport & Leisure',
     'television': 'Television',
     'video_games': 'Video Games',
     'mythology': 'Mythology',
@@ -18,18 +26,20 @@ export function formatCategory(category: string): string {
     'celebrities': 'Celebrities',
     'general_knowledge': 'General Knowledge',
     'computers': 'Computers',
-    'mathematics': 'Mathematics',
     'gadgets': 'Gadgets',
     'anime_and_manga': 'Anime & Manga',
     'cartoons_and_animations': 'Cartoons & Animations',
     'comics': 'Comics',
     'books': 'Books',
     'film': 'Film',
+    'film_and_tv': 'Film & TV',
+    'food_and_drink': 'Food & Drink',
     'music': 'Music',
     'musicals_and_theatres': 'Musicals & Theatres',
     'board_games': 'Board Games',
     'nature': 'Nature',
     'toys': 'Toys',
+    'society_and_culture': 'Society & Culture',
     'japanese_anime_and_manga': 'Japanese Anime & Manga',
     'cartoon_and_animations': 'Cartoon & Animations'
   };

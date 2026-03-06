@@ -1,87 +1,90 @@
+import { useState } from 'react';
 import { useNavigate} from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
 import './NavigationBar.css';
 
 interface NavigationBarProps {
-  currentPage: 'home' | 'rooms' | 'about' | 'login' | 'account' | 'premium';
+  currentPage: 'home' | 'rooms' | 'about' | 'login' | 'account' | 'premium' | 'contribute';
 }
 
 function NavigationBar({ currentPage }: NavigationBarProps) {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const auth = useAppSelector((state) => state.auth);
   const isLoggedIn = !!auth.token && !!auth.username;
+  const isPremium = isLoggedIn && !!auth.isPremium;
 
-  const handleHomeClick = () => {
-    navigate('/');
-  };
-
-  const handleRoomsClick = () => {
-    navigate('/rooms');
-  };
-
-  const handleAboutClick = () => {
-    navigate('/about');
-  };
-
-  const handleLoginClick = () => {
-    navigate('/login');
-  };
-
-  const handleAccountClick = () => {
-    navigate('/account');
-  };
-
-  const handlePremiumClick = () => {
-    navigate('/premium');
+  const handleNavClick = (path: string) => {
+    setIsMobileMenuOpen(false);
+    navigate(path);
   };
 
   return (
     <nav className="navigation-bar">
       <div className="nav-container">
-        <div className="nav-brand" onClick={handleHomeClick}>
+        <div className="nav-brand" onClick={() => handleNavClick('/')}>
           <div className="logo-circle">
             <span className="logo-text">T</span>
           </div>
           <span className="brand-text">Trivvia</span>
         </div>
-        
-        <div className="nav-links">
+
+        <button
+          className={`hamburger-btn ${isMobileMenuOpen ? 'open' : ''}`}
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMobileMenuOpen}
+        >
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+          <span className="hamburger-line" />
+        </button>
+
+        <div className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <button
             className={`nav-link ${currentPage === 'home' ? 'active' : ''}`}
-            onClick={handleHomeClick}
+            onClick={() => handleNavClick('/')}
           >
             Home
           </button>
           <button
             className={`nav-link ${currentPage === 'about' ? 'active' : ''}`}
-            onClick={handleAboutClick}
+            onClick={() => handleNavClick('/about')}
           >
             About
           </button>
           {!isLoggedIn && (
             <button
               className={`nav-link ${currentPage === 'login' ? 'active' : ''}`}
-              onClick={handleLoginClick}
+              onClick={() => handleNavClick('/login')}
             >
               Login
             </button>
           )}
           <button
             className={`nav-link ${currentPage === 'premium' ? 'active' : ''}`}
-            onClick={handlePremiumClick}
+            onClick={() => handleNavClick('/premium')}
           >
             Premium
           </button>
+          {isPremium && (
+            <button
+              className={`nav-link ${currentPage === 'contribute' ? 'active' : ''}`}
+              onClick={() => handleNavClick('/contribute')}
+            >
+              Contribute
+            </button>
+          )}
           <button
             className={`nav-categories-btn ${currentPage === 'rooms' ? 'active' : ''}`}
-            onClick={handleRoomsClick}
+            onClick={() => handleNavClick('/rooms')}
           >
             Categories
           </button>
           {isLoggedIn && (
             <button
               className={`nav-account-btn ${currentPage === 'account' ? 'active' : ''}`}
-              onClick={handleAccountClick}
+              onClick={() => handleNavClick('/account')}
               aria-label="Account"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -92,6 +95,9 @@ function NavigationBar({ currentPage }: NavigationBarProps) {
           )}
         </div>
       </div>
+      {isMobileMenuOpen && (
+        <div className="mobile-menu-backdrop" onClick={() => setIsMobileMenuOpen(false)} />
+      )}
     </nav>
   );
 }

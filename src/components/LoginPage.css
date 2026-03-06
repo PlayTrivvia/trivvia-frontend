@@ -224,6 +224,7 @@
 
 .signup-link:hover {
   color: #4f46e5;
+  background-color: transparent;
 }
 
 .signup-link:focus,

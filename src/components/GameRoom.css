@@ -361,6 +361,11 @@
   box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.3);
 }
 
+/* Leave button: show text on desktop, icon on mobile */
+.leave-icon {
+  display: none;
+}
+
 .guest-signup-nudge {
   font-size: var(--text-sm);
   font-weight: 600;
@@ -385,6 +390,7 @@
 
 .guest-signup-link:hover {
   color: #4f51e0;
+  background-color: transparent;
 }
 
 .about-button {
@@ -903,7 +909,7 @@
   }
   
   .question-text {
-    font-size: var(--text-sm);
+    font-size: var(--text-lg);
   }
 }
 
@@ -912,23 +918,24 @@
   .game-room {
     height: 100vh;
     height: 100dvh; /* Use dynamic viewport height for mobile */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  
+
   .game-header {
-    min-height: 30px !important;
+    min-height: 44px;
     background: #faf8f3;
     border-bottom: none;
     box-shadow: none;
   }
-  
+
   .header-main {
     padding: 6px var(--spacing-md);
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     text-align: left;
-    min-height: 20px !important;
-    height: 20px !important;
+    min-height: 44px;
+    height: auto;
   }
   
   .header-left {
@@ -947,7 +954,27 @@
   }
   
   .leave-button {
-    display: none; /* Hide leave button on mobile */
+    padding: 0 !important;
+    min-height: 44px;
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border-width: 3px !important;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .leave-text {
+    display: none;
+  }
+
+  .leave-icon {
+    display: inline;
+    font-size: var(--text-lg);
+    font-weight: 900;
+    line-height: 1;
   }
 
   .guest-signup-nudge {
@@ -961,8 +988,8 @@
     grid-template-rows: 1fr;
     padding: 0;
     gap: 0;
-    height: calc(100vh - 50px);
-    height: calc(100dvh - 50px);
+    height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
   }
   
 
@@ -1047,6 +1074,29 @@
   .submit-answer-button {
     padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--text-sm);
+  }
+
+  /* Use --vh from useVisualViewport when available */
+  .game-room {
+    height: calc(var(--vh, 1vh) * 100);
+  }
+
+  .game-layout {
+    height: calc(var(--vh, 1vh) * 100 - 56px);
+  }
+
+  /* When virtual keyboard is open, compact the question area */
+  .game-room.keyboard-open .question-content {
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .game-room.keyboard-open .question-text {
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  .game-room.keyboard-open .hint-display {
+    display: none;
   }
 }
 
@@ -1236,6 +1286,10 @@
   .play-general-button {
     width: 100%;
     max-width: 300px;
+  }
+
+  .question-text {
+    font-size: var(--text-base);
   }
 }
 

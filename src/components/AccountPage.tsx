@@ -7,12 +7,20 @@ import './AccountPage.css';
 
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8081';
 
+const ROOM_ORDER = ['general', 'science', 'math', 'pop-culture', 'history', 'sports', 'geography', 'literature'];
+
 function AccountPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const auth = useAppSelector((state) => state.auth);
   const sessionId = useAppSelector((state) => state.username.sessionId);
-  const [bestStreak, setBestStreak] = useState<number | null>(null);
+  interface RoomStreak {
+    room_slug: string;
+    name: string;
+    emoji: string;
+    best_streak: number;
+  }
+  const [roomStreaks, setRoomStreaks] = useState<RoomStreak[] | null>(null);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelError, setCancelError] = useState('');
@@ -27,14 +35,23 @@ function AccountPage() {
     })
       .then((r) => r.json())
       .then((data) => {
-        setBestStreak(data.best_streak ?? 0);
         dispatch(setPremiumStatus({
           isPremium: Boolean(data.is_premium),
           premiumExpiresAt: data.premium_expires_at ? String(data.premium_expires_at) : null,
         }));
       })
-      .catch(() => setBestStreak(0));
+      .catch(() => {});
   }, [auth.token, sessionId]);
+
+  useEffect(() => {
+    if (!auth.token) return;
+    fetch(`${apiBase}/user_room_streaks`, {
+      headers: { Authorization: `Bearer ${auth.token}` },
+    })
+      .then((r) => r.json())
+      .then((data) => setRoomStreaks(data.room_streaks ?? []))
+      .catch(() => setRoomStreaks([]));
+  }, [auth.token]);
 
   // Redirect if not logged in
   if (!auth.token || !auth.username) {
@@ -156,16 +173,30 @@ function AccountPage() {
                 </span>
               </div>
 
-              <div className="info-row">
-                <span className="info-label">Best Streak:</span>
-                <span className="info-value">
-                  {bestStreak === null
-                    ? '...'
-                    : bestStreak > 0
-                    ? `🔥 ${bestStreak}`
-                    : '🔥 Start playing to build a streak'}
-                </span>
-              </div>
+            </div>
+
+            <div className="account-section">
+              <h3 className="section-title">Best Streaks by Room</h3>
+              {roomStreaks === null ? (
+                <div className="info-row">
+                  <span className="info-value">...</span>
+                </div>
+              ) : roomStreaks.length === 0 ? (
+                <div className="info-row">
+                  <span className="info-value">🔥 Start playing to build a streak</span>
+                </div>
+              ) : (
+                [...roomStreaks].sort((a, b) => {
+                const ai = ROOM_ORDER.indexOf(a.room_slug);
+                const bi = ROOM_ORDER.indexOf(b.room_slug);
+                return (ai === -1 ? ROOM_ORDER.length : ai) - (bi === -1 ? ROOM_ORDER.length : bi);
+              }).map((rs) => (
+                  <div className="info-row" key={rs.room_slug}>
+                    <span className="info-label">{rs.emoji} {rs.name}:</span>
+                    <span className="info-value">🔥 {rs.best_streak}</span>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Subscription management — only for premium users */}

@@ -7,6 +7,8 @@ import LoginPage from './components/LoginPage'
 import SignupPage from './components/SignupPage'
 import AccountPage from './components/AccountPage'
 import PremiumPage from './components/PremiumPage'
+import AdminPage from './components/AdminPage'
+import ContributePage from './components/ContributePage'
 
 import { useUserStatus } from './hooks/useHeartbeat'
 import { useAppSelector, useAppDispatch } from './store/hooks'
@@ -99,6 +101,8 @@ function AppContent() {
           path="/premium" 
           element={<PremiumPage />} 
         />
+        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/contribute" element={<ContributePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

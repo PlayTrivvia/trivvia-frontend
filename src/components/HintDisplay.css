@@ -28,6 +28,13 @@
   word-break: break-word;
 }
 
+.hint-countdown {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: #64748b;
+  font-style: italic;
+}
+
 .hint-complete {
   font-size: var(--text-sm);
   color: #10b981;
