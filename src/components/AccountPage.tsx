@@ -39,6 +39,9 @@ function AccountPage() {
           isPremium: Boolean(data.is_premium),
           premiumExpiresAt: data.premium_expires_at ? String(data.premium_expires_at) : null,
         }));
+        if (data.subscription_cancelled) {
+          dispatch(setSubscriptionCancelled());
+        }
       })
       .catch(() => {});
   }, [auth.token, sessionId]);
