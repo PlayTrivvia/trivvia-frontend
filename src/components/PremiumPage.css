@@ -419,13 +419,44 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  .premium-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+
+  .premium-header {
+    margin-bottom: 40px;
+    padding-top: var(--spacing-lg);
+  }
+
   .premium-title {
-    font-size: 2.25rem;
+    font-size: 1.875rem;
+  }
+
+  .premium-subtitle {
+    font-size: 1rem;
   }
 
   .pricing-cards {
     grid-template-columns: 1fr;
-    gap: var(--spacing-xl);
+    gap: var(--spacing-lg);
+    margin-bottom: 50px;
+    padding: 20px 0;
+  }
+
+  .pricing-card {
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-xl);
+    margin: 10px 0;
+  }
+
+  .pricing-card::before {
+    inset: -4px;
+    border: 2px solid #000;
+  }
+
+  .pricing-card::after {
+    display: none;
   }
 
   .pricing-card.premium-card.featured {
@@ -436,8 +467,118 @@
     transform: rotate(0deg) scale(1.02);
   }
 
+  .card-title {
+    font-size: 1.5rem;
+  }
+
+  .price {
+    font-size: 2.25rem;
+  }
+
+  .plan-button {
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    font-size: var(--text-base);
+  }
+
+  .plan-button::before {
+    inset: -3px;
+    border: 2px solid #000;
+  }
+
+  .plan-button::after {
+    display: none;
+  }
+
+  .featured-badge {
+    border: 2px solid #000;
+    font-size: 0.75rem;
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .faq-section {
+    margin-top: 40px;
+    padding-top: 30px;
+  }
+
+  .faq-title {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+  }
+
   .faq-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+
+  .faq-item {
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
+    padding: var(--spacing-lg);
+  }
+
+  .faq-question {
+    font-size: 1rem;
+  }
+
+  .faq-answer {
+    font-size: 0.875rem;
+  }
+
+  .premium-footer {
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .premium-container {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .premium-title {
+    font-size: 1.5rem;
+  }
+
+  .premium-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .pricing-card {
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-lg);
+  }
+
+  .pricing-card::before,
+  .pricing-card::after {
+    display: none;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .price {
+    font-size: 2rem;
+  }
+
+  .feature-item {
+    font-size: 0.875rem;
+  }
+
+  .plan-button {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+    font-size: var(--text-sm);
+  }
+
+  .plan-button::before,
+  .plan-button::after {
+    display: none;
+  }
+
+  .faq-item {
+    padding: var(--spacing-md);
   }
 }
 

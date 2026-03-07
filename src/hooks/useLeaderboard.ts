@@ -64,13 +64,19 @@ export const useLeaderboard = (room: string = 'general') => {
         };
         
         setUsers(prevUsers => {
-          // Check if user already exists
-          const exists = prevUsers.find(u => u.session_id === message.session_id);
-          if (!exists) {
-            return [...prevUsers, newUser];
-          } else {
+          // Check if user already exists by session_id or username
+          const existsBySession = prevUsers.find(u => u.session_id === message.session_id);
+          if (existsBySession) {
             return prevUsers;
           }
+          const existsByUsername = prevUsers.find(u => u.username === username);
+          if (existsByUsername) {
+            // Same user reconnected with a new session — replace the old entry
+            return prevUsers.map(u =>
+              u.username === username ? newUser : u
+            );
+          }
+          return [...prevUsers, newUser];
         });
       } else if (message.type === 'user_offline') {
         // Mark authenticated user as offline — keep them on the leaderboard

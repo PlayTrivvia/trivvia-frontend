@@ -27,10 +27,7 @@ export default function GameRoom({ playerName, onLeaveGame }: GameRoomProps) {
   useEffect(() => {
     const handleUnload = () => dispatch(clearUsername());
     window.addEventListener("beforeunload", handleUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleUnload);
-      dispatch(clearUsername());
-    };
+    return () => window.removeEventListener("beforeunload", handleUnload);
   }, [dispatch]);
   const navigate = useNavigate();
   const location = useLocation();

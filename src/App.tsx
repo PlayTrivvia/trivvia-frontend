@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom'
 
 import IntroPage from './components/IntroPage'
 import RoomsPage from './components/RoomsPage'
@@ -18,8 +19,19 @@ import './App.css'
 // Wrapper component to handle navigation and state management
 function AppContent() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { currentUsername } = useAppSelector((state) => state.username);
   const dispatch = useAppDispatch();
+  const prevPathRef = useRef(location.pathname);
+
+  // Clear username when navigating away from /game (prevents ghost sessions on back nav)
+  useEffect(() => {
+    if (prevPathRef.current === '/game' && location.pathname !== '/game' && currentUsername) {
+      dispatch(clearUsername());
+    }
+    prevPathRef.current = location.pathname;
+  }, [location.pathname, currentUsername, dispatch]);
+
   const clearUsernameAndNavigate = () => {
     dispatch(clearUsername());
     navigate('/rooms');

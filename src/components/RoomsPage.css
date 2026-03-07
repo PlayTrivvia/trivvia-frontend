@@ -5,8 +5,6 @@
   padding: 0;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-  overflow-y: auto;
-  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -53,7 +51,7 @@
   gap: var(--spacing-2xl);
   margin-bottom: var(--spacing-2xl);
   width: 100%;
-  padding: 0 var(--spacing-xl);
+  padding: 12px var(--spacing-xl);
   box-sizing: border-box;
 }
 
@@ -64,7 +62,7 @@
   box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease;
   position: relative;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
@@ -481,67 +479,12 @@
   }
 
   .rooms-header {
-    padding: var(--spacing-xl) var(--spacing-lg);
-  }
-
-  .rooms-title {
-    font-size: 2rem;
-  }
-
-  .rooms-subtitle {
-    font-size: 1.125rem;
-    margin-bottom: 0;
-  }
-
-  .rooms-grid {
-    grid-template-columns: 1fr;
-    gap: var(--spacing-2xl);
-    max-width: 100%;
-    margin-top: 0;
-    padding: 0 var(--spacing-lg);
-  }
-
-  .room-card {
-    height: 240px;
-  }
-  
-  .room-top-section {
-    padding: var(--spacing-md);
-    min-height: 150px;
-  }
-  
-  .room-bottom-section {
-    padding: var(--spacing-md);
-    min-height: 80px;
-  }
-
-  .room-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 2.5rem;
-  }
-
-  .room-name {
-    font-size: var(--text-base);
-  }
-
-  .room-description {
-    font-size: var(--text-xs);
-  }
-
-}
-
-@media (max-width: 480px) {
-  .rooms-page {
-    padding: 0;
-  }
-  
-  .rooms-header {
     padding: var(--spacing-lg) var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
   }
 
   .rooms-title {
-    font-size: 1.875rem;
+    font-size: 1.75rem;
   }
 
   .rooms-subtitle {
@@ -550,31 +493,45 @@
   }
 
   .rooms-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    max-width: 100%;
     margin-top: 0;
-    padding: 0 var(--spacing-md);
-    gap: var(--spacing-2xl);
+    padding: 10px var(--spacing-md);
   }
 
   .room-card {
     height: 220px;
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
   }
-  
+
+  .room-card::before {
+    inset: -4px;
+    border: 2px solid #000;
+  }
+
+  .room-card::after {
+    display: none;
+  }
+
   .room-top-section {
     padding: var(--spacing-sm);
     min-height: 130px;
+    border-bottom: 2px solid #000;
   }
-  
+
   .room-bottom-section {
     padding: var(--spacing-sm);
-    min-height: 80px;
+    min-height: 70px;
   }
 
   .room-icon {
-    width: 50px;
-    height: 50px;
+    width: 48px;
+    height: 48px;
     font-size: 2rem;
   }
-  
+
   .room-name {
     font-size: var(--text-sm);
   }
@@ -582,12 +539,93 @@
   .room-description {
     font-size: var(--text-xs);
   }
-  
+
+  .room-button {
+    border: 3px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+    font-size: var(--text-sm);
+    padding: var(--spacing-xs) var(--spacing-md);
+  }
+
+  .room-button::before,
+  .room-button::after {
+    display: none;
+  }
+
+  .rooms-footer {
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin-top: var(--spacing-lg);
+  }
+
+}
+
+@media (max-width: 480px) {
+  .rooms-page {
+    padding: 0;
+  }
+
+  .rooms-header {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .rooms-title {
+    font-size: 1.5rem;
+  }
+
+  .rooms-subtitle {
+    font-size: 0.875rem;
+    margin-bottom: 0;
+  }
+
+  .rooms-grid {
+    margin-top: 0;
+    padding: 6px var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+
+  .room-card {
+    height: 200px;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .room-card::before,
+  .room-card::after {
+    display: none;
+  }
+
+  .room-top-section {
+    padding: var(--spacing-xs);
+    min-height: 110px;
+    border-bottom: 2px solid #000;
+  }
+
+  .room-bottom-section {
+    padding: var(--spacing-xs);
+    min-height: 70px;
+  }
+
+  .room-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+  }
+
+  .room-name {
+    font-size: var(--text-xs);
+  }
+
+  .room-description {
+    display: none;
+  }
+
   .room-button {
     font-size: var(--text-xs);
-    padding: var(--spacing-sm) var(--spacing-md);
-    min-width: 80px;
-    min-height: 44px;
+    padding: var(--spacing-xs) var(--spacing-md);
+    min-width: 70px;
+    min-height: 36px;
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -795,28 +833,78 @@
 }
 
 /* Mobile Modal Styles */
+@media (max-width: 768px) {
+  .modal-content {
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .modal-content::before {
+    inset: -4px;
+    border: 2px solid #000;
+  }
+
+  .modal-content::after {
+    display: none;
+  }
+
+  .modal-header {
+    border-bottom: 2px solid #000;
+  }
+
+  .modal-footer {
+    border-top: 2px solid #000;
+  }
+
+  .modal-button {
+    border: 3px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .modal-button::before,
+  .modal-button::after {
+    display: none;
+  }
+}
+
 @media (max-width: 480px) {
   .modal-overlay {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
-  
+
   .modal-content {
     max-width: none;
     width: 100%;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
   }
-  
+
+  .modal-content::before,
+  .modal-content::after {
+    display: none;
+  }
+
   .modal-header,
   .modal-body,
   .modal-footer {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
   }
-  
+
   .modal-icon {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
-  
+
   .modal-title {
-    font-size: var(--text-xl);
+    font-size: var(--text-lg);
+  }
+
+  .modal-description {
+    font-size: var(--text-sm);
+  }
+
+  .modal-button {
+    border: 2px solid #000;
+    font-size: var(--text-sm);
   }
 }
 

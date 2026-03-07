@@ -619,33 +619,148 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .account-container {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
   }
 
   .account-card {
     padding: var(--spacing-xl);
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .account-card::before {
+    inset: -4px;
+    border: 2px solid #000;
+  }
+
+  .account-card::after {
+    display: none;
   }
 
   .account-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
 
   .account-subtitle {
-    font-size: 1rem;
+    font-size: 0.9375rem;
+  }
+
+  .premium-banner {
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-lg);
+  }
+
+  .premium-banner::before {
+    inset: -3px;
+    border: 2px solid #000;
+  }
+
+  .premium-banner::after {
+    display: none;
+  }
+
+  .premium-banner-title {
+    font-size: 1.25rem;
+  }
+
+  .premium-banner-button {
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    font-size: var(--text-sm);
+  }
+
+  .premium-banner-button::before {
+    display: none;
+  }
+
+  .premium-active-banner {
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-lg);
+  }
+
+  .premium-active-banner::before {
+    inset: -3px;
+    border: 2px solid #000;
+  }
+
+  .premium-active-icon {
+    font-size: 2rem;
+  }
+
+  .logout-button {
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-sm) var(--spacing-xl);
+    font-size: var(--text-sm);
+  }
+
+  .logout-button::before {
+    inset: -3px;
+    border: 2px solid #000;
+  }
+
+  .logout-button::after {
+    display: none;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+  }
+
+  .info-label,
+  .info-value {
+    font-size: var(--text-sm);
+  }
+
+  .account-modal-content {
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .account-modal-content::before {
+    inset: -4px;
+    border: 2px solid #000;
+  }
+
+  .account-modal-header {
+    border-bottom: 2px solid #000;
+  }
+
+  .account-modal-footer {
+    border-top: 2px solid #000;
+  }
+
+  .account-modal-btn-keep {
+    border: 3px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+    font-size: var(--text-sm);
+  }
+
+  .account-modal-btn-keep::before {
+    display: none;
   }
 }
 
 @media (max-width: 480px) {
   .account-container {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
 
   .account-card {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .account-card::before,
+  .account-card::after {
+    display: none;
   }
 
   .account-title {
-    font-size: 1.875rem;
+    font-size: 1.5rem;
   }
 
   .info-row {
@@ -654,12 +769,68 @@
     gap: var(--spacing-xs);
   }
 
+  .premium-banner {
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-md);
+  }
+
+  .premium-banner::before,
+  .premium-banner::after {
+    display: none;
+  }
+
   .premium-banner-content {
     flex-direction: column;
     text-align: center;
   }
 
   .premium-banner-button {
+    width: 100%;
+    border: 2px solid #000;
+  }
+
+  .premium-active-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .logout-button {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .logout-button::before,
+  .logout-button::after {
+    display: none;
+  }
+
+  .account-modal-content {
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .account-modal-content::before {
+    display: none;
+  }
+
+  .account-modal-header,
+  .account-modal-body,
+  .account-modal-footer {
+    padding: var(--spacing-md);
+  }
+
+  .account-modal-icon {
+    font-size: 2rem;
+  }
+
+  .account-modal-title {
+    font-size: var(--text-lg);
+  }
+
+  .account-modal-btn-keep {
+    border: 2px solid #000;
+    min-width: auto;
     width: 100%;
   }
 }

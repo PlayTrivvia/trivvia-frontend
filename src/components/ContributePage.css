@@ -452,21 +452,130 @@
 /* Mobile */
 @media (max-width: 768px) {
   .contribute-container {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
+  }
+
+  .contribute-header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
   }
 
   .contribute-title {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+
+  .contribute-subtitle {
+    font-size: 1rem;
+  }
+
+  .contribute-badge {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .contribute-form {
+    border: 3px solid #000;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-lg);
+  }
+
+  .contribute-form::before {
+    inset: -4px;
+    border: 2px solid #000;
+  }
+
+  .contribute-form::after {
+    display: none;
+  }
+
+  .contribute-success {
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .contribute-success::before {
+    display: none;
+  }
+
+  .submit-btn {
+    border: 3px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    font-size: var(--text-sm);
+    padding: 10px 24px;
+  }
+
+  .submit-btn::before {
+    inset: -3px;
+    border: 2px solid #000;
+  }
+
+  .difficulty-btn {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .contribute-guidelines {
+    border: 3px solid #000;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+    padding: var(--spacing-md);
+  }
+
+  .contribute-guidelines::before {
+    inset: -3px;
+    border: 2px solid #000;
+  }
+
+  .form-error {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .answer-remove {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
   }
 }
 
 @media (max-width: 480px) {
   .contribute-container {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
 
   .contribute-title {
-    font-size: 1.875rem;
+    font-size: 1.5rem;
+  }
+
+  .contribute-subtitle {
+    font-size: 0.875rem;
+  }
+
+  .contribute-form {
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.25);
+    padding: var(--spacing-md);
+  }
+
+  .contribute-form::before,
+  .contribute-form::after {
+    display: none;
+  }
+
+  .submit-btn {
+    border: 2px solid #000;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .submit-btn::before {
+    display: none;
+  }
+
+  .contribute-guidelines {
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .contribute-guidelines::before {
+    display: none;
   }
 
   .difficulty-buttons {
