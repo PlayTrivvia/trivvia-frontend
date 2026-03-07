@@ -704,7 +704,6 @@ function AdminPage() {
     }
   };
 
-  const difficultyLabel = (d: string) => ({ easy: '🟢 Easy', medium: '🟡 Medium', hard: '🔴 Hard' }[d] || d);
   const statusBadge = (s: string) => ({
     pending: 'badge-pending',
     approved: 'badge-approved',
