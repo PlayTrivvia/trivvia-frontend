@@ -67,7 +67,7 @@ function AppContent() {
                 onLeaveGame={handleLeaveGame}
               />
             ) : (
-              <Navigate to="/about" replace />
+              <Navigate to="/rooms" replace />
             )
           } 
         />
