@@ -1,50 +1,86 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
- * Tracks the visual viewport height to handle virtual keyboard on mobile.
- * Sets a --vh CSS custom property on the target element so CSS can use
- * `calc(var(--vh, 1vh) * 100)` instead of `100vh` for accurate height
- * when the keyboard is open.
+ * Detects the virtual keyboard on mobile and resizes the target
+ * element to match the visual viewport (the area above the keyboard).
  *
- * Uses requestAnimationFrame for smooth, jank-free updates that sync
- * with the keyboard's own slide animation.
- *
- * Returns whether the keyboard is currently open.
+ * Height is applied directly as an inline style for instant response.
+ * Ancestor scroll is locked so iOS can't auto-scroll fixed elements.
  */
 export function useVisualViewport(targetRef?: React.RefObject<HTMLElement | null>) {
   const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-  const rafId = useRef<number>(0);
 
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
 
-    const KEYBOARD_THRESHOLD = 100; // px difference to consider keyboard open
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+    if (!isMobile) return;
+
+    // Lock every scrollable ancestor so iOS can't auto-scroll
+    // the page when focusing an input inside the fixed game-room.
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+
+    // The .app wrapper also has overflow-y:auto — lock it too.
+    const appEl = document.querySelector('.app') as HTMLElement | null;
+    if (appEl) {
+      appEl.style.overflow = 'hidden';
+      appEl.style.height = '100%';
+    }
 
     const update = () => {
-      // Cancel any pending frame to avoid stacking
-      if (rafId.current) cancelAnimationFrame(rafId.current);
+      const el = targetRef?.current;
+      if (!el) return;
 
-      rafId.current = requestAnimationFrame(() => {
-        const fullHeight = window.innerHeight;
-        const viewportHeight = vv.height;
-        const keyboardOpen = fullHeight - viewportHeight > KEYBOARD_THRESHOLD;
+      const keyboardHeight = window.innerHeight - vv.height;
+      const open = keyboardHeight > 100;
 
-        setIsKeyboardOpen(keyboardOpen);
+      if (open) {
+        // Set BOTH height and bottom to avoid overconstrained layout.
+        // CSS has top:0 + bottom:0 — setting only height leaves bottom:0
+        // which some browsers resolve incorrectly, clipping the input.
+        el.style.height = `${vv.height}px`;
+        el.style.bottom = 'auto';
+      } else {
+        el.style.height = '';
+        el.style.bottom = '';
+      }
 
-        // Set --vh on the target element (or documentElement as fallback)
-        const el = targetRef?.current ?? document.documentElement;
-        el.style.setProperty('--vh', `${viewportHeight * 0.01}px`);
-      });
+      // Force the browser to recalculate layout immediately
+      // so the chat-form is painted in its new position.
+      void el.offsetHeight;
+
+      setIsKeyboardOpen(open);
     };
 
     update();
     vv.addEventListener('resize', update);
     vv.addEventListener('scroll', update);
+
     return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+
+      if (appEl) {
+        appEl.style.overflow = '';
+        appEl.style.height = '';
+      }
+
+      const el = targetRef?.current;
+      if (el) {
+        el.style.height = '';
+        el.style.bottom = '';
+      }
+
       vv.removeEventListener('resize', update);
       vv.removeEventListener('scroll', update);
-      if (rafId.current) cancelAnimationFrame(rafId.current);
     };
   }, [targetRef]);
 

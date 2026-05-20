@@ -42,6 +42,14 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory, currentPlaye
     }
   }
 
+  const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    scrollToBottom()
+    const target = e.target
+    setTimeout(() => {
+      target.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+    }, 300)
+  }
+
   const formatTimestamp = (timestamp: string) => {
     return timestamp
   }
@@ -148,6 +156,7 @@ function ChatComponent({ messages, onSendMessage, isLoadingHistory, currentPlaye
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
+              onFocus={handleInputFocus}
               placeholder="Type your answer..."
               className="chat-input"
               maxLength={200}

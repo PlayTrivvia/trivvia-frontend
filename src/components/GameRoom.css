@@ -18,7 +18,11 @@
 }
 
 .game-room {
-  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #faf8f3;
   display: flex;
   flex-direction: column;
@@ -220,7 +224,7 @@
   transition: all 0.3s ease;
   position: relative;
   z-index: 100;
-  flex-shrink: 0;
+  flex: 0 0 auto;
 }
 
 .header-main {
@@ -509,7 +513,7 @@
   padding: var(--spacing-xl) var(--spacing-lg) var(--spacing-md) var(--spacing-lg);
   flex-wrap: wrap;
   gap: var(--spacing-sm);
-  flex-shrink: 0;
+  flex: 0 0 auto;
   min-height: 0;
   border-bottom: 3px solid #000;
   position: relative;
@@ -612,7 +616,7 @@
 .question-content {
   padding: var(--spacing-xl) var(--spacing-xl);
   text-align: center;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   border-bottom: 3px solid #000;
   min-height: 0;
   background: #faf8f3;
@@ -910,19 +914,18 @@
   .answer-input-group {
     flex-direction: column;
   }
-  
-  .question-text {
-    font-size: var(--text-lg);
-  }
 }
 
 /* Mobile-specific styles for chat-like experience */
 @media (max-width: 1024px) {
   .game-room {
-    height: 100vh;
-    height: 100dvh;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    transition: height 0.15s ease-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: auto;
+    overflow: hidden;
   }
 
   .game-header {
@@ -964,8 +967,7 @@
   }
 
   .game-title {
-    font-size: var(--text-base);
-    margin: 0;
+    display: none;
   }
 
   .player-welcome {
@@ -1007,7 +1009,8 @@
     gap: 0;
     flex: 1;
     min-height: 0;
-    transition: height 0.15s ease-out;
+    overflow: hidden;
+    height: auto;
   }
 
   .game-sidebar {
@@ -1018,6 +1021,7 @@
     order: 0;
     min-height: 0;
     height: 100%;
+    overflow: hidden;
   }
 
   .unified-chat-section {
@@ -1028,6 +1032,7 @@
     height: 100%;
     margin: 0;
     transform: none;
+    overflow: hidden;
   }
 
   .unified-chat-section::before,
@@ -1044,7 +1049,6 @@
     border-bottom: 1px solid #e5e7eb;
     background: #faf8f3;
     flex-shrink: 0;
-    transition: padding 0.15s ease-out, opacity 0.15s ease-out;
   }
 
   .question-category,
@@ -1074,7 +1078,6 @@
     border-bottom: 1px solid #e5e7eb;
     background: #faf8f3;
     flex-shrink: 0;
-    transition: all 0.15s ease-out;
     overflow: hidden;
   }
 
@@ -1108,44 +1111,6 @@
     font-size: var(--text-sm);
   }
 
-  /* Use --vh from useVisualViewport when available */
-  .game-room {
-    height: calc(var(--vh, 1vh) * 100);
-  }
-
-  .game-layout {
-    height: auto;
-    flex: 1;
-  }
-
-  /* When virtual keyboard is open, collapse question area to maximize chat */
-  .game-room.keyboard-open .question-header {
-    padding: 2px var(--spacing-md);
-  }
-
-  .game-room.keyboard-open .question-content {
-    padding: 4px var(--spacing-md);
-    max-height: 2.5em;
-    overflow: hidden;
-  }
-
-  .game-room.keyboard-open .question-text {
-    font-size: var(--text-xs);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .game-room.keyboard-open .hint-display {
-    display: none;
-  }
-
-  .game-room.keyboard-open .question-category,
-  .game-room.keyboard-open .question-difficulty {
-    font-size: 9px;
-    padding: 1px 4px;
-  }
 }
 
 /* Hide mobile menu button on desktop */
@@ -1358,10 +1323,6 @@
   .back-to-rooms-button::before,
   .play-general-button::before {
     display: none;
-  }
-
-  .question-text {
-    font-size: var(--text-base);
   }
 
   .welcome-content {

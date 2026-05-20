@@ -47,8 +47,9 @@
 }
 
 .chat-messages {
-  flex: 1;
+  flex: 1 1 auto;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--spacing-md) var(--spacing-xl);
   display: flex;
   flex-direction: column;
@@ -384,7 +385,8 @@
   padding: var(--spacing-lg) var(--spacing-xl);
   border-top: 3px solid #000;
   background: #ffffff;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom, 0px));
   min-height: 0;
   position: relative;
   z-index: 2;
@@ -452,14 +454,16 @@
   box-shadow: none;
 }
 
-/* Mobile adjustments */
-@media (max-width: 768px) {
+/* Mobile adjustments — matches GameRoom mobile breakpoint */
+@media (max-width: 1024px) {
   .chat-component {
     height: auto;
     flex: 1;
     min-height: 0;
     position: relative;
     -webkit-overflow-scrolling: touch;
+    overflow: hidden;
+    max-width: 100%;
   }
 
   .chat-history-loading {
@@ -477,16 +481,18 @@
     gap: var(--spacing-xs);
   }
 
-  /* WhatsApp-style input bar — compact, always at bottom */
+  /* Input bar — sits at bottom of flex layout normally,
+     jumps to fixed position above keyboard when it opens */
   .chat-form {
     padding: 6px var(--spacing-sm);
     padding-bottom: calc(6px + env(safe-area-inset-bottom, 0px));
-    position: sticky;
-    bottom: 0;
     background: #faf8f3;
-    z-index: 10;
+    z-index: 100;
     border-top: 1px solid #e5e7eb;
-    transition: padding 0.15s ease-out;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
   }
 
   .message {
@@ -532,6 +538,9 @@
     flex-direction: row;
     gap: 6px;
     align-items: center;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .chat-input {
@@ -547,6 +556,9 @@
     background: #fff;
     min-height: 38px;
     box-sizing: border-box;
+    min-width: 0;
+    flex: 1;
+    width: 0;
   }
 
   .chat-input:focus {
@@ -566,6 +578,7 @@
     transform: none;
     min-height: 38px;
     font-size: var(--text-sm);
+    flex-shrink: 0;
   }
 
   .send-button:hover:not(:disabled) {
